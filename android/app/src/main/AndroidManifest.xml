@@ -1,6 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Needed to load news from the internet in the release APK. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
+
     <application
-        android:label="daily_pulse"
+        android:label="Daily Pulse"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

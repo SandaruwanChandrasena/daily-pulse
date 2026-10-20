@@ -24,23 +24,23 @@ class NewsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // News image
+            // News image (or a grey box if the news has no image)
             AspectRatio(
               aspectRatio: 16 / 9,
-              child: CachedNetworkImage(
-                imageUrl: article.imageUrl,
-                fit: BoxFit.cover,
-                placeholder: (context, url) => Container(
-                  color: colors.surfaceContainerHighest,
-                  child: const Center(
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  ),
-                ),
-                errorWidget: (context, url, error) => Container(
-                  color: colors.surfaceContainerHighest,
-                  child: const Icon(Icons.broken_image_outlined, size: 40),
-                ),
-              ),
+              child: article.imageUrl.isEmpty
+                  ? _imagePlaceholder(colors)
+                  : CachedNetworkImage(
+                      imageUrl: article.imageUrl,
+                      fit: BoxFit.cover,
+                      placeholder: (context, url) => Container(
+                        color: colors.surfaceContainerHighest,
+                        child: const Center(
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        ),
+                      ),
+                      errorWidget: (context, url, error) =>
+                          _imagePlaceholder(colors),
+                    ),
             ),
 
             // Title, source and date
@@ -84,6 +84,18 @@ class NewsCard extends StatelessWidget {
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  /// Grey box with an icon. Used when there is no image or it fails to load.
+  Widget _imagePlaceholder(ColorScheme colors) {
+    return Container(
+      color: colors.surfaceContainerHighest,
+      child: Icon(
+        Icons.image_not_supported_outlined,
+        size: 40,
+        color: colors.onSurfaceVariant,
       ),
     );
   }
