@@ -2,12 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../models/article.dart';
+import '../models/news_category.dart';
 import '../providers/news_provider.dart';
+import '../widgets/category_chips.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_card.dart';
 import 'news_details_screen.dart';
 
-/// First screen. Shows the latest news from the API.
+/// First screen. Category chips on top, news list below.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -32,45 +34,60 @@ class HomeScreen extends StatelessWidget {
       ),
       body: Consumer<NewsProvider>(
         builder: (context, news, child) {
-          if (news.isLoading && news.articles.isEmpty) {
-            return const Center(child: CircularProgressIndicator());
-          }
-
-          if (news.errorMessage != null && news.articles.isEmpty) {
-            return ErrorView(
-              message: news.errorMessage!,
-              onRetry: news.loadTopHeadlines,
-            );
-          }
-
-          if (news.articles.isEmpty) {
-            return const Center(child: Text('No news found.'));
-          }
-
           return Column(
             children: [
-              if (news.errorMessage != null)
-                _RefreshErrorBar(message: news.errorMessage!),
-              Expanded(
-                child: RefreshIndicator(
-                  onRefresh: news.loadTopHeadlines,
-                  child: ListView.builder(
-                    padding: const EdgeInsets.symmetric(vertical: 8),
-                    itemCount: news.articles.length,
-                    itemBuilder: (context, index) {
-                      final article = news.articles[index];
-                      return NewsCard(
-                        article: article,
-                        onTap: () => _openDetails(context, article),
-                      );
-                    },
-                  ),
-                ),
+              CategoryChips(
+                categories: NewsCategory.all,
+                selectedId: news.selectedCategory,
+                onSelected: news.selectCategory,
               ),
+              Expanded(child: _buildNewsArea(context, news)),
             ],
           );
         },
       ),
+    );
+  }
+
+  /// Picks what to show under the chips: spinner, error, empty text or list.
+  Widget _buildNewsArea(BuildContext context, NewsProvider news) {
+    if (news.isLoading && news.articles.isEmpty) {
+      return const Center(child: CircularProgressIndicator());
+    }
+
+    if (news.errorMessage != null && news.articles.isEmpty) {
+      return ErrorView(
+        message: news.errorMessage!,
+        onRetry: news.loadTopHeadlines,
+      );
+    }
+
+    if (news.articles.isEmpty) {
+      return const Center(child: Text('No news found.'));
+    }
+
+    return Column(
+      children: [
+        if (news.errorMessage != null)
+          _RefreshErrorBar(message: news.errorMessage!),
+        Expanded(
+          child: RefreshIndicator(
+            onRefresh: news.loadTopHeadlines,
+            child: ListView.builder(
+              key: PageStorageKey(news.selectedCategory),
+              padding: const EdgeInsets.symmetric(vertical: 8),
+              itemCount: news.articles.length,
+              itemBuilder: (context, index) {
+                final article = news.articles[index];
+                return NewsCard(
+                  article: article,
+                  onTap: () => _openDetails(context, article),
+                );
+              },
+            ),
+          ),
+        ),
+      ],
     );
   }
 }

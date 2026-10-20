@@ -1,44 +1,59 @@
 import 'package:flutter/foundation.dart';
 
 import '../models/article.dart';
+import '../models/news_category.dart';
 import '../services/news_api_service.dart';
 
-/// Holds the news list and tells the UI when it changes.
-///
-/// The UI only reads 3 things from here:
-/// - [articles]     the news to show
-/// - [isLoading]    true while we wait for the API
-/// - [errorMessage] a message to show if something failed
+/// Holds the news for each category and tells the UI when it changes.
 class NewsProvider extends ChangeNotifier {
   final NewsApiService _apiService;
 
   NewsProvider({NewsApiService? apiService})
     : _apiService = apiService ?? NewsApiService();
 
-  List<Article> _articles = [];
-  bool _isLoading = false;
-  String? _errorMessage;
+  String _selectedCategory = NewsCategory.all.first.id;
+  final Map<String, List<Article>> _articlesByCategory = {};
+  final Map<String, String?> _errorsByCategory = {};
+  final Set<String> _loadingCategories = {};
 
-  List<Article> get articles => _articles;
-  bool get isLoading => _isLoading;
-  String? get errorMessage => _errorMessage;
+  String get selectedCategory => _selectedCategory;
+  List<Article> get articles => _articlesByCategory[_selectedCategory] ?? [];
+  bool get isLoading => _loadingCategories.contains(_selectedCategory);
+  String? get errorMessage => _errorsByCategory[_selectedCategory];
 
-  /// Gets the top news from the API.
+  /// Switches category. Uses saved news if we already have it (saves API calls).
+  void selectCategory(String categoryId) {
+    if (categoryId == _selectedCategory) return;
+
+    _selectedCategory = categoryId;
+    notifyListeners();
+
+    final hasSavedNews = _articlesByCategory[categoryId]?.isNotEmpty ?? false;
+    if (!hasSavedNews && !isLoading) {
+      loadTopHeadlines();
+    }
+  }
+
+  /// Gets fresh news for the selected category from the API.
   Future<void> loadTopHeadlines() async {
-    _isLoading = true;
-    _errorMessage = null;
-    notifyListeners(); // UI shows the spinner
+    final category = _selectedCategory;
+
+    _loadingCategories.add(category);
+    _errorsByCategory[category] = null;
+    notifyListeners();
 
     try {
-      _articles = await _apiService.fetchTopHeadlines();
+      _articlesByCategory[category] = await _apiService.fetchTopHeadlines(
+        category: category,
+      );
     } on NewsApiException catch (e) {
-      _errorMessage = e.message;
+      _errorsByCategory[category] = e.message;
     } catch (e) {
-      _errorMessage = 'Something went wrong. Please try again.';
+      _errorsByCategory[category] = 'Something went wrong. Please try again.';
       debugPrint('loadTopHeadlines error: $e');
     }
 
-    _isLoading = false;
-    notifyListeners(); // UI shows the news or the error
+    _loadingCategories.remove(category);
+    notifyListeners();
   }
 }
