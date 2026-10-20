@@ -35,7 +35,8 @@ class NewsApiService {
     final uri = Uri.parse('$_baseUrl/top-headlines').replace(
       queryParameters: {
         'country': _country,
-        if (category != null) 'category': category,
+        // "?category" adds this entry only when category is not null.
+        'category': ?category,
         'pageSize': '30',
       },
     );
@@ -67,9 +68,7 @@ class NewsApiService {
     try {
       body = jsonDecode(response.body) as Map<String, dynamic>;
     } on FormatException {
-      throw const NewsApiException(
-        'The server sent bad data. Please try again.',
-      );
+      throw const NewsApiException('The server sent bad data. Please try again.');
     }
 
     if (response.statusCode != 200 || body['status'] != 'ok') {
