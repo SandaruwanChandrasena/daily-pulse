@@ -1,8 +1,8 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../models/article.dart';
 import '../utils/date_helper.dart';
+import 'news_image.dart';
 
 /// One news item in the list: image, title, source and date.
 class NewsCard extends StatelessWidget {
@@ -24,26 +24,7 @@ class NewsCard extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // News image (or a grey box if the news has no image)
-            AspectRatio(
-              aspectRatio: 16 / 9,
-              child: article.imageUrl.isEmpty
-                  ? _imagePlaceholder(colors)
-                  : CachedNetworkImage(
-                      imageUrl: article.imageUrl,
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) => Container(
-                        color: colors.surfaceContainerHighest,
-                        child: const Center(
-                          child: CircularProgressIndicator(strokeWidth: 2),
-                        ),
-                      ),
-                      errorWidget: (context, url, error) =>
-                          _imagePlaceholder(colors),
-                    ),
-            ),
-
-            // Title, source and date
+            NewsImage(imageUrl: article.imageUrl),
             Padding(
               padding: const EdgeInsets.all(12),
               child: Column(
@@ -84,18 +65,6 @@ class NewsCard extends StatelessWidget {
             ),
           ],
         ),
-      ),
-    );
-  }
-
-  /// Grey box with an icon. Used when there is no image or it fails to load.
-  Widget _imagePlaceholder(ColorScheme colors) {
-    return Container(
-      color: colors.surfaceContainerHighest,
-      child: Icon(
-        Icons.image_not_supported_outlined,
-        size: 40,
-        color: colors.onSurfaceVariant,
       ),
     );
   }
