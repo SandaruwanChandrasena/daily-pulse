@@ -18,10 +18,8 @@ migrate_working_dir/
 *.iws
 .idea/
 
-# The .vscode folder contains launch configuration and tasks you configure in
-# VS Code which you may wish to be included in version control, so this line
-# is commented out by default.
-#.vscode/
+# VS Code settings are personal (they hold local paths), so we do not push them.
+.vscode/
 
 # Flutter/Dart/Pub related
 **/doc/api/
@@ -44,6 +42,6 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
-
-
+# Secret API key. Never push this file.
+# Use lib/config/api_keys.example.dart as a template.
 lib/config/api_keys.dart
