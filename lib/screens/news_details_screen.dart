@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../models/article.dart';
 import '../utils/date_helper.dart';
 import '../widgets/news_image.dart';
+import 'article_web_view_screen.dart';
 
 /// Shows one news item and a button to read the full article.
 class NewsDetailsScreen extends StatelessWidget {
@@ -11,24 +11,17 @@ class NewsDetailsScreen extends StatelessWidget {
 
   const NewsDetailsScreen({super.key, required this.article});
 
-  /// Opens the full article in the phone's browser.
-  Future<void> _openArticle(BuildContext context) async {
-    final uri = Uri.tryParse(article.url);
-    var opened = false;
-
-    if (uri != null) {
-      try {
-        opened = await launchUrl(uri, mode: LaunchMode.externalApplication);
-      } catch (_) {
-        opened = false;
-      }
-    }
-
-    if (!opened && context.mounted) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Could not open the article.')),
-      );
-    }
+  /// Opens the full article inside the app.
+  void _openArticle(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ArticleWebViewScreen(
+          url: article.url,
+          title: article.sourceName,
+        ),
+      ),
+    );
   }
 
   @override
@@ -95,7 +88,7 @@ class NewsDetailsScreen extends StatelessWidget {
                       onPressed: article.url.isEmpty
                           ? null
                           : () => _openArticle(context),
-                      icon: const Icon(Icons.open_in_new),
+                      icon: const Icon(Icons.article_outlined),
                       label: const Text('Read full article'),
                     ),
                   ),
