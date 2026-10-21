@@ -20,15 +20,15 @@ class NewsListTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
+        padding: const EdgeInsets.fromLTRB(16, 10, 4, 10),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
               child: SizedBox(
-                width: 110,
-                height: 80,
+                width: 120,
+                height: 90,
                 child: NewsImage(imageUrl: article.imageUrl, aspectRatio: null),
               ),
             ),
