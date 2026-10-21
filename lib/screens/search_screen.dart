@@ -5,6 +5,7 @@ import '../models/article.dart';
 import '../providers/search_provider.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_card.dart';
+import '../widgets/recent_searches.dart';
 import 'news_details_screen.dart';
 
 /// Search box in the AppBar and the results below it.
@@ -35,6 +36,13 @@ class _SearchScreenState extends State<SearchScreen> {
     _textController.clear();
     context.read<SearchProvider>().clear();
     setState(() {});
+  }
+
+  void _searchAgain(String word) {
+    _textController.text = word;
+    FocusScope.of(context).unfocus();
+    setState(() {});
+    context.read<SearchProvider>().search(word);
   }
 
   void _openDetails(Article article) {
@@ -76,8 +84,17 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
-  /// Picks what to show: start message, spinner, error, no results or list.
+  /// Picks what to show: recent searches, start message, spinner, error or list.
   Widget _buildResults(SearchProvider search) {
+    if (!search.hasSearched && search.history.isNotEmpty) {
+      return RecentSearches(
+        words: search.history,
+        onTap: _searchAgain,
+        onRemove: search.removeFromHistory,
+        onClearAll: search.clearHistory,
+      );
+    }
+
     if (!search.hasSearched) {
       return const _MessageView(
         icon: Icons.search,

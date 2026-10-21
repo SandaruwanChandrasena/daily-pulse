@@ -2,29 +2,50 @@ import 'package:flutter/foundation.dart';
 
 import '../models/article.dart';
 import '../services/news_api_service.dart';
+import '../services/search_history_service.dart';
 
-/// Holds the search results and tells the Search screen when they change.
+/// Holds the search results and the recent searches for the Search screen.
 class SearchProvider extends ChangeNotifier {
-  final NewsApiService _apiService;
+  static const int _maxHistory = 10;
 
-  SearchProvider({NewsApiService? apiService})
-    : _apiService = apiService ?? NewsApiService();
+  final NewsApiService _apiService;
+  final SearchHistoryService _historyService;
+
+  SearchProvider({
+    NewsApiService? apiService,
+    SearchHistoryService? historyService,
+  }) : _apiService = apiService ?? NewsApiService(),
+       _historyService = historyService ?? SearchHistoryService();
 
   List<Article> _articles = [];
   bool _isLoading = false;
   String? _errorMessage;
   String _query = '';
+  List<String> _history = [];
 
   List<Article> get articles => _articles;
   bool get isLoading => _isLoading;
   String? get errorMessage => _errorMessage;
   String get query => _query;
   bool get hasSearched => _query.isNotEmpty;
+  List<String> get history => _history;
+
+  /// Reads the saved recent searches from the phone (called once at start).
+  Future<void> loadHistory() async {
+    try {
+      _history = await _historyService.load();
+      notifyListeners();
+    } catch (e) {
+      debugPrint('loadHistory error: $e');
+    }
+  }
 
   /// Searches the API. Skips the call if we already have results for this word.
   Future<void> search(String text) async {
     final query = text.trim();
     if (query.isEmpty) return;
+
+    _addToHistory(query);
 
     final sameAsBefore = query.toLowerCase() == _query.toLowerCase();
     if (sameAsBefore && _isLoading) return;
@@ -60,12 +81,41 @@ class SearchProvider extends ChangeNotifier {
     return search(lastQuery);
   }
 
-  /// Clears the search box results.
+  /// Clears the results, so the recent searches show again.
   void clear() {
     _query = '';
     _articles = [];
     _isLoading = false;
     _errorMessage = null;
     notifyListeners();
+  }
+
+  void removeFromHistory(String word) {
+    _history = _history.where((item) => item != word).toList();
+    _saveHistory();
+  }
+
+  void clearHistory() {
+    _history = [];
+    _saveHistory();
+  }
+
+  /// Puts the word at the top of the list, with no duplicates and max 10 words.
+  void _addToHistory(String word) {
+    final lower = word.toLowerCase();
+    _history = [
+      word,
+      ..._history.where((item) => item.toLowerCase() != lower),
+    ].take(_maxHistory).toList();
+    _saveHistory();
+  }
+
+  Future<void> _saveHistory() async {
+    notifyListeners();
+    try {
+      await _historyService.save(_history);
+    } catch (e) {
+      debugPrint('saveHistory error: $e');
+    }
   }
 }

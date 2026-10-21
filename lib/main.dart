@@ -13,7 +13,9 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => NewsProvider()..loadTopHeadlines(),
         ),
-        ChangeNotifierProvider(create: (_) => SearchProvider()),
+        ChangeNotifierProvider(
+          create: (_) => SearchProvider()..loadHistory(),
+        ),
       ],
       child: const DailyPulseApp(),
     ),
