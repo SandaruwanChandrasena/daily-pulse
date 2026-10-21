@@ -3,7 +3,10 @@ import 'package:provider/provider.dart';
 
 import '../config/topics.dart';
 import '../models/article.dart';
+import '../providers/bookmark_provider.dart';
+import '../providers/news_provider.dart';
 import '../providers/search_provider.dart';
+import '../utils/search_suggestions.dart';
 import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_list_tile.dart';
@@ -11,10 +14,12 @@ import '../widgets/page_title.dart';
 import '../widgets/recent_searches.dart';
 import '../widgets/search_field.dart';
 import '../widgets/section_title.dart';
+import '../widgets/suggestion_tile.dart';
 import '../widgets/topic_chips.dart';
 import 'news_details_screen.dart';
 
 /// Search tab: big title, rounded search box, then ideas or results below.
+/// While typing, it shows live suggestions and matching loaded news.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -23,8 +28,14 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  static final List<String> _allTopics = {
+    ...Topics.trending,
+    ...Topics.popular,
+  }.toList();
+
   late final SearchProvider _search;
   late final TextEditingController _textController;
+  bool _isTyping = false;
 
   @override
   void initState() {
@@ -46,12 +57,29 @@ class _SearchScreenState extends State<SearchScreen> {
     final query = _search.query;
     if (query.isNotEmpty && query != _textController.text.trim()) {
       _textController.text = query;
+      if (mounted && _isTyping) setState(() => _isTyping = false);
     }
   }
 
+  /// Live mode is on while the box has text that is not searched yet.
+  void _onTyping(String text) {
+    setState(() => _isTyping = text.trim().isNotEmpty);
+  }
+
   void _submit(String text) {
+    if (text.trim().isEmpty) return;
     FocusScope.of(context).unfocus();
+    setState(() => _isTyping = false);
     _search.search(text);
+  }
+
+  /// The ↖ button: puts the word in the box so the user can keep typing.
+  void _fillBox(String text) {
+    _textController.value = TextEditingValue(
+      text: '$text ',
+      selection: TextSelection.collapsed(offset: text.length + 1),
+    );
+    setState(() => _isTyping = true);
   }
 
   void _searchWord(String word) {
@@ -61,6 +89,7 @@ class _SearchScreenState extends State<SearchScreen> {
 
   void _clear() {
     _textController.clear();
+    setState(() => _isTyping = false);
     _search.clear();
   }
 
@@ -79,16 +108,84 @@ class _SearchScreenState extends State<SearchScreen> {
             child: SearchField(
               controller: _textController,
               onSubmitted: _submit,
+              onChanged: _onTyping,
               onClear: _clear,
             ),
           ),
           Expanded(
             child: Consumer<SearchProvider>(
-              builder: (context, search, child) => _buildBody(search),
+              builder: (context, search, child) =>
+                  _isTyping ? _buildLiveView(search) : _buildBody(search),
             ),
           ),
         ],
       ),
+    );
+  }
+
+  /// All news on the phone: every category, last results and saved news.
+  /// listen: false = read once (this runs on every key press anyway).
+  List<Article> _loadedNews(SearchProvider search) {
+    final seenUrls = <String>{};
+    return [
+      for (final article in [
+        ...Provider.of<NewsProvider>(context, listen: false).allArticles,
+        ...search.articles,
+        ...Provider.of<BookmarkProvider>(context, listen: false).saved,
+      ])
+        if (seenUrls.add(article.url)) article,
+    ];
+  }
+
+  /// While typing: "search online" row, suggestions, then matching news.
+  Widget _buildLiveView(SearchProvider search) {
+    final typed = _textController.text.trim();
+    final loadedNews = _loadedNews(search);
+    final suggestions = buildSuggestions(
+      query: typed,
+      history: search.history,
+      topics: _allTopics,
+      articles: loadedNews,
+    );
+    final matches = findInTitles(typed, loadedNews);
+    final colors = Theme.of(context).colorScheme;
+
+    return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.only(bottom: 16),
+      children: [
+        ListTile(
+          leading: Icon(Icons.travel_explore, color: colors.primary),
+          title: Text.rich(
+            TextSpan(
+              children: [
+                const TextSpan(text: 'Search online for '),
+                TextSpan(
+                  text: '"$typed"',
+                  style: const TextStyle(fontWeight: FontWeight.w800),
+                ),
+              ],
+            ),
+          ),
+          onTap: () => _submit(typed),
+        ),
+        for (final suggestion in suggestions)
+          SuggestionTile(
+            suggestion: suggestion,
+            query: typed,
+            onTap: () => _searchWord(suggestion.text),
+            onFill: () => _fillBox(suggestion.text),
+          ),
+        if (matches.isNotEmpty) ...[
+          SectionTitle(text: 'In loaded news (${matches.length})'),
+          for (final article in matches)
+            NewsListTile(
+              article: article,
+              onTap: () =>
+                  NewsDetailsScreen.open(context, article, related: matches),
+            ),
+        ],
+      ],
     );
   }
 

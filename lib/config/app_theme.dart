@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 class AppTheme {
   static const Color brandRed = Color(0xFFD32F2F);
   static const Color brandRedLight = Color(0xFFEF5350);
+  static const Color highlightBlue = Color(0xFF1E88E5);
 
   static ThemeData light() {
     return _build(

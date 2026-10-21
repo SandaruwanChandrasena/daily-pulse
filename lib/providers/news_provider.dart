@@ -35,6 +35,16 @@ class NewsProvider extends ChangeNotifier {
     return _articlesByCategory[categoryId] ?? [];
   }
 
+  /// All news we have in memory, from every category, with no duplicates.
+  List<Article> get allArticles {
+    final seenUrls = <String>{};
+    return [
+      for (final list in _articlesByCategory.values)
+        for (final article in list)
+          if (seenUrls.add(article.url)) article,
+    ];
+  }
+
   bool isLoadingFor(String categoryId) {
     return _loadingCategories.contains(categoryId);
   }

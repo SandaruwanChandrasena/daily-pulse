@@ -4,12 +4,14 @@ import 'package:flutter/material.dart';
 class SearchField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String> onSubmitted;
+  final ValueChanged<String> onChanged;
   final VoidCallback onClear;
 
   const SearchField({
     super.key,
     required this.controller,
     required this.onSubmitted,
+    required this.onChanged,
     required this.onClear,
   });
 
@@ -25,6 +27,7 @@ class SearchField extends StatelessWidget {
       controller: controller,
       textInputAction: TextInputAction.search,
       onSubmitted: onSubmitted,
+      onChanged: onChanged,
       decoration: InputDecoration(
         hintText: 'Search news...',
         prefixIcon: const Icon(Icons.search),
