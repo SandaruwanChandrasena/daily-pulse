@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../providers/navigation_provider.dart';
 import 'explore_screen.dart';
 import 'home_screen.dart';
-import 'placeholder_screen.dart';
 import 'saved_screen.dart';
 import 'search_screen.dart';
+import 'settings_screen.dart';
 
 /// The app frame: 5 tabs and the bottom navigation bar.
 /// NavigationProvider knows the open tab. IndexedStack keeps all tabs alive.
@@ -18,7 +18,7 @@ class MainShell extends StatelessWidget {
     ExploreScreen(),
     SearchScreen(),
     SavedScreen(),
-    PlaceholderScreen(title: 'Settings', icon: Icons.settings_outlined),
+    SettingsScreen(),
   ];
 
   void _goTo(BuildContext context, AppTab tab) {

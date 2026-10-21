@@ -106,6 +106,17 @@ class NewsProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Deletes saved news (phone + memory), then loads fresh news.
+  Future<void> clearCache() async {
+    await _cacheService.clearAll();
+    _articlesByCategory.clear();
+    _savedAtByCategory.clear();
+    _errorsByCategory.clear();
+    _offlineCategories.clear();
+    notifyListeners();
+    await loadNews();
+  }
+
   /// Sri Lanka uses search (title only). Other categories use top headlines.
   Future<List<Article>> _fetchFromApi(String categoryId) {
     final category = NewsCategory.byId(categoryId);

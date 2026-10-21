@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import '../models/article.dart';
 import '../providers/bookmark_provider.dart';
+import '../utils/confirm_dialog.dart';
 import '../widgets/news_list_tile.dart';
 import '../widgets/page_title.dart';
 import 'news_details_screen.dart';
@@ -23,27 +24,13 @@ class SavedScreen extends StatelessWidget {
   Future<void> _confirmClearAll(BuildContext context) async {
     final bookmarks = context.read<BookmarkProvider>();
 
-    final confirmed = await showDialog<bool>(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('Clear all saved news?'),
-        content: const Text(
-          "This removes every saved story. You can't undo it.",
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: const Text('Cancel'),
-          ),
-          TextButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: const Text('Clear all'),
-          ),
-        ],
-      ),
+    final confirmed = await showConfirmDialog(
+      context,
+      title: 'Clear all saved news?',
+      message: "This removes every saved story. You can't undo it.",
+      confirmLabel: 'Clear all',
     );
-
-    if (confirmed == true) bookmarks.clearAll();
+    if (confirmed) bookmarks.clearAll();
   }
 
   @override

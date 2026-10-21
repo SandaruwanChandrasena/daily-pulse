@@ -6,6 +6,7 @@ import 'providers/bookmark_provider.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/news_provider.dart';
 import 'providers/search_provider.dart';
+import 'providers/theme_provider.dart';
 import 'screens/main_shell.dart';
 
 void main() {
@@ -19,6 +20,7 @@ void main() {
           create: (_) => SearchProvider()..loadHistory(),
         ),
         ChangeNotifierProvider(create: (_) => BookmarkProvider()..load()),
+        ChangeNotifierProvider(create: (_) => ThemeProvider()..load()),
       ],
       child: const DailyPulseApp(),
     ),
@@ -30,10 +32,14 @@ class DailyPulseApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = context.watch<ThemeProvider>().themeMode;
+
     return MaterialApp(
       title: 'Daily Pulse',
       debugShowCheckedModeBanner: false,
       theme: AppTheme.light(),
+      darkTheme: AppTheme.dark(),
+      themeMode: themeMode,
       home: const MainShell(),
     );
   }

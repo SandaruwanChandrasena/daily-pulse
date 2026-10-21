@@ -58,4 +58,15 @@ class NewsCacheService {
       debugPrint('cache save error: $e');
     }
   }
+
+  /// Deletes the saved news of every category.
+  Future<void> clearAll() async {
+    try {
+      final keys = await _prefs.getKeys();
+      final cacheKeys = keys.where((key) => key.startsWith(_keyPrefix));
+      await _prefs.clear(allowList: cacheKeys.toSet());
+    } catch (e) {
+      debugPrint('cache clear error: $e');
+    }
+  }
 }
