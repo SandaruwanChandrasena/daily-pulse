@@ -30,13 +30,27 @@ class NewsApiService {
   /// We can pass a fake client in tests. In the app we use a real one.
   NewsApiService({http.Client? client}) : _client = client ?? http.Client();
 
-  /// Gets the top news. [category] is optional (we use it on Day 4).
+  /// Gets the top news. [category] is optional (like 'sports').
   Future<List<Article>> fetchTopHeadlines({String? category}) async {
     final uri = Uri.parse('$_baseUrl/top-headlines').replace(
       queryParameters: {
         'country': _country,
         // "?category" adds this entry only when category is not null.
         'category': ?category,
+        'pageSize': '30',
+      },
+    );
+
+    return _getArticles(uri);
+  }
+
+  /// Searches all news for a keyword (newest first).
+  Future<List<Article>> searchNews(String query) async {
+    final uri = Uri.parse('$_baseUrl/everything').replace(
+      queryParameters: {
+        'q': query,
+        'language': 'en',
+        'sortBy': 'publishedAt',
         'pageSize': '30',
       },
     );
@@ -68,7 +82,9 @@ class NewsApiService {
     try {
       body = jsonDecode(response.body) as Map<String, dynamic>;
     } on FormatException {
-      throw const NewsApiException('The server sent bad data. Please try again.');
+      throw const NewsApiException(
+        'The server sent bad data. Please try again.',
+      );
     }
 
     if (response.statusCode != 200 || body['status'] != 'ok') {

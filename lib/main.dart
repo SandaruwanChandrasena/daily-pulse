@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'providers/news_provider.dart';
+import 'providers/search_provider.dart';
 import 'screens/home_screen.dart';
 
 void main() {
   runApp(
-    // Makes NewsProvider available to every screen below it.
-    // "..loadTopHeadlines()" starts loading news as soon as the app opens.
-    ChangeNotifierProvider(
-      create: (_) => NewsProvider()..loadTopHeadlines(),
+    // Makes every provider available to all screens below it.
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(
+          create: (_) => NewsProvider()..loadTopHeadlines(),
+        ),
+        ChangeNotifierProvider(create: (_) => SearchProvider()),
+      ],
       child: const DailyPulseApp(),
     ),
   );

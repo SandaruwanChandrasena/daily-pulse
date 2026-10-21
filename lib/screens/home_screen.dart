@@ -8,6 +8,7 @@ import '../widgets/category_chips.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_card.dart';
 import 'news_details_screen.dart';
+import 'search_screen.dart';
 
 /// First screen. Category chips on top, news list below.
 class HomeScreen extends StatelessWidget {
@@ -22,6 +23,13 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
+  void _openSearch(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const SearchScreen()),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -31,6 +39,13 @@ class HomeScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold),
         ),
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            tooltip: 'Search',
+            onPressed: () => _openSearch(context),
+          ),
+        ],
       ),
       body: Consumer<NewsProvider>(
         builder: (context, news, child) {
