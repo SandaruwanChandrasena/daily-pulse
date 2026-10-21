@@ -30,17 +30,29 @@ class Article {
   /// }
   factory Article.fromJson(Map<String, dynamic> json) {
     final source = json['source'] as Map<String, dynamic>?;
+    final sourceName = source?['name'] as String? ?? 'Unknown source';
+    final title = (json['title'] as String?)?.trim() ?? 'No title';
 
     return Article(
-      title: (json['title'] as String?)?.trim() ?? 'No title',
+      title: _removeSourceFromTitle(title, sourceName),
       description: (json['description'] as String?)?.trim() ?? '',
       imageUrl: json['urlToImage'] as String? ?? '',
-      sourceName: source?['name'] as String? ?? 'Unknown source',
+      sourceName: sourceName,
       publishedAt:
           DateTime.tryParse(json['publishedAt'] as String? ?? '') ??
           DateTime.now(),
       url: json['url'] as String? ?? '',
     );
+  }
+
+  /// NewsAPI often adds " - Axios" to the end of the title. We remove it,
+  /// because the source name is already shown under the title.
+  static String _removeSourceFromTitle(String title, String sourceName) {
+    final ending = ' - $sourceName';
+    if (title.endsWith(ending) && title.length > ending.length) {
+      return title.substring(0, title.length - ending.length).trim();
+    }
+    return title;
   }
 
   /// Turns the Article back into JSON in the same shape as NewsAPI,

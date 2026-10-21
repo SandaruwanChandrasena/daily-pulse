@@ -20,15 +20,6 @@ class HomeScreen extends StatelessWidget {
 
   static const int _featuredCount = 5;
 
-  void _openDetails(BuildContext context, Article article) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NewsDetailsScreen(article: article),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -65,6 +56,13 @@ class HomeScreen extends StatelessWidget {
     }
 
     final category = NewsCategory.byId(news.selectedCategory);
+    void openDetails(Article article) => NewsDetailsScreen.open(
+      context,
+      article,
+      categoryLabel: category.label,
+      related: news.articles,
+    );
+
     final featured = news.articles
         .where((article) => article.imageUrl.isNotEmpty)
         .take(_featuredCount)
@@ -90,7 +88,7 @@ class HomeScreen extends StatelessWidget {
                   key: ValueKey(category.id),
                   articles: featured,
                   badgeText: category.label,
-                  onTap: (article) => _openDetails(context, article),
+                  onTap: openDetails,
                 ),
               ),
             ),
@@ -104,7 +102,7 @@ class HomeScreen extends StatelessWidget {
                 final article = latest[index];
                 return NewsListTile(
                   article: article,
-                  onTap: () => _openDetails(context, article),
+                  onTap: () => openDetails(article),
                 );
               },
             ),

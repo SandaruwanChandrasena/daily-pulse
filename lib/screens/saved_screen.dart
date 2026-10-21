@@ -11,13 +11,12 @@ import 'news_details_screen.dart';
 class SavedScreen extends StatelessWidget {
   const SavedScreen({super.key});
 
-  void _openDetails(BuildContext context, Article article) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NewsDetailsScreen(article: article),
-      ),
-    );
+  void _openDetails(
+    BuildContext context,
+    Article article,
+    List<Article> saved,
+  ) {
+    NewsDetailsScreen.open(context, article, related: saved);
   }
 
   /// Asks "Are you sure?" before removing all saved news.
@@ -75,7 +74,7 @@ class SavedScreen extends StatelessWidget {
                 final article = saved[index];
                 return NewsListTile(
                   article: article,
-                  onTap: () => _openDetails(context, article),
+                  onTap: () => _openDetails(context, article, saved),
                 );
               },
             ),

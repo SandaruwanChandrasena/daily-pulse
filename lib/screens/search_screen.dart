@@ -64,12 +64,7 @@ class _SearchScreenState extends State<SearchScreen> {
   }
 
   void _openDetails(Article article) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => NewsDetailsScreen(article: article),
-      ),
-    );
+    NewsDetailsScreen.open(context, article, related: _search.articles);
   }
 
   @override

@@ -47,12 +47,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
     context.read<NavigationProvider>().goTo(AppTab.search);
   }
 
-  void _openDetails(Article article) {
-    Navigator.push(
+  void _openDetails(Article article, List<Article> related) {
+    NewsDetailsScreen.open(
       context,
-      MaterialPageRoute(
-        builder: (context) => NewsDetailsScreen(article: article),
-      ),
+      article,
+      categoryLabel: NewsCategory.byId(_filterId).label,
+      related: related,
     );
   }
 
@@ -147,7 +147,8 @@ class _ExploreScreenState extends State<ExploreScreen> {
             final article = stories[index];
             return NewsListTile(
               article: article,
-              onTap: () => _openDetails(article),
+              onTap: () =>
+                  _openDetails(article, news.articlesFor(_filterId)),
             );
           },
         ),
