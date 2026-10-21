@@ -40,14 +40,14 @@ class TopicChips extends StatelessWidget {
     );
   }
 
-  /// "Sri Lanka" shows as "#SriLanka". Hot topics get a red chip.
+  /// "Sri Lanka" shows as "#SriLanka". Hot topics get a light red background.
   Widget _buildChip(String topic, ColorScheme colors) {
     final isHot = hotTopics.contains(topic);
 
     return ActionChip(
       label: Text('#${topic.replaceAll(' ', '')}'),
       labelStyle: TextStyle(
-        color: isHot ? colors.primary : colors.onSurface,
+        color: colors.onSurface,
         fontWeight: FontWeight.w600,
       ),
       backgroundColor: isHot

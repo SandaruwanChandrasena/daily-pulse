@@ -27,7 +27,6 @@ class _ExploreScreenState extends State<ExploreScreen> {
   static const int _topStoriesCount = 5;
 
   String _filterId = NewsCategory.all.first.id;
-  bool _showAllTopics = false;
 
   /// The chips at the top only change the Top Stories list.
   void _selectFilter(String categoryId) {
@@ -103,18 +102,12 @@ class _ExploreScreenState extends State<ExploreScreen> {
               },
             ),
           ),
-          SliverToBoxAdapter(
-            child: SectionTitle(
-              text: 'Popular Topics',
-              actionLabel: _showAllTopics ? 'Show less' : 'See All',
-              onAction: () => setState(() => _showAllTopics = !_showAllTopics),
-            ),
-          ),
+          const SliverToBoxAdapter(child: SectionTitle(text: 'Popular Topics')),
           SliverToBoxAdapter(
             child: TopicChips(
               topics: Topics.popular,
               hotTopics: Topics.hot,
-              scrollable: !_showAllTopics,
+              scrollable: true,
               onTap: _searchTopic,
             ),
           ),
