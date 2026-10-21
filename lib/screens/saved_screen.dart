@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../providers/bookmark_provider.dart';
 import '../utils/confirm_dialog.dart';
+import '../widgets/empty_view.dart';
 import '../widgets/news_list_tile.dart';
 import '../widgets/page_title.dart';
 import 'news_details_screen.dart';
@@ -53,7 +54,11 @@ class SavedScreen extends StatelessWidget {
         ],
       ),
       body: saved.isEmpty
-          ? const _EmptySaved()
+          ? const EmptyView(
+              icon: Icons.bookmark_border,
+              title: 'No saved news yet',
+              message: 'Tap the bookmark icon on any story to save it here.',
+            )
           : ListView.builder(
               padding: const EdgeInsets.symmetric(vertical: 8),
               itemCount: saved.length,
@@ -65,45 +70,6 @@ class SavedScreen extends StatelessWidget {
                 );
               },
             ),
-    );
-  }
-}
-
-/// Shown when nothing is saved yet.
-class _EmptySaved extends StatelessWidget {
-  const _EmptySaved();
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(
-              Icons.bookmark_border,
-              size: 64,
-              color: theme.colorScheme.outline,
-            ),
-            const SizedBox(height: 16),
-            Text(
-              'No saved news yet',
-              style: theme.textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w700,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              'Tap the bookmark icon on any story to save it here.',
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyMedium,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

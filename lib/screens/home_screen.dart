@@ -7,6 +7,7 @@ import '../providers/news_provider.dart';
 import '../utils/date_helper.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/category_tabs.dart';
+import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/featured_carousel.dart';
 import '../widgets/info_bar.dart';
@@ -52,7 +53,11 @@ class HomeScreen extends StatelessWidget {
     }
 
     if (news.articles.isEmpty) {
-      return const Center(child: Text('No news found.'));
+      return const EmptyView(
+        icon: Icons.newspaper,
+        title: 'No news found',
+        message: 'Try another category, or come back later.',
+      );
     }
 
     final category = NewsCategory.byId(news.selectedCategory);

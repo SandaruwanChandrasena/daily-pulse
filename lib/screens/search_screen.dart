@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../config/topics.dart';
 import '../models/article.dart';
 import '../providers/search_provider.dart';
+import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_list_tile.dart';
 import '../widgets/page_title.dart';
@@ -104,9 +105,10 @@ class _SearchScreenState extends State<SearchScreen> {
     }
 
     if (search.articles.isEmpty) {
-      return _MessageView(
+      return EmptyView(
         icon: Icons.search_off,
-        message: 'No news found for "${search.query}".\nTry another word.',
+        title: 'No results',
+        message: 'No news found for "${search.query}". Try another word.',
       );
     }
 
@@ -157,37 +159,6 @@ class _SearchScreenState extends State<SearchScreen> {
           onTap: () => _openDetails(article),
         );
       },
-    );
-  }
-}
-
-/// A big grey icon with a short message under it.
-class _MessageView extends StatelessWidget {
-  final IconData icon;
-  final String message;
-
-  const _MessageView({required this.icon, required this.message});
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Icon(icon, size: 64, color: theme.colorScheme.outline),
-            const SizedBox(height: 16),
-            Text(
-              message,
-              textAlign: TextAlign.center,
-              style: theme.textTheme.bodyLarge,
-            ),
-          ],
-        ),
-      ),
     );
   }
 }
