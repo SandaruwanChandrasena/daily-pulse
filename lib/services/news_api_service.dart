@@ -10,8 +10,9 @@ import '../models/article.dart';
 /// A simple error with a message we can show to the user.
 class NewsApiException implements Exception {
   final String message;
+  final bool isNoInternet;
 
-  const NewsApiException(this.message);
+  const NewsApiException(this.message, {this.isNoInternet = false});
 
   @override
   String toString() => message;
@@ -67,11 +68,11 @@ class NewsApiService {
           .get(uri, headers: {'X-Api-Key': ApiKeys.newsApiKey})
           .timeout(_timeout);
     } on SocketException {
-      throw const NewsApiException(_noInternetMessage);
+      throw const NewsApiException(_noInternetMessage, isNoInternet: true);
     } on http.ClientException {
       // On Android, the http package often wraps "no internet" errors
       // inside a ClientException. So we show the same message.
-      throw const NewsApiException(_noInternetMessage);
+      throw const NewsApiException(_noInternetMessage, isNoInternet: true);
     } on TimeoutException {
       throw const NewsApiException(
         'The server is taking too long. Please try again.',

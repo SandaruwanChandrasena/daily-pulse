@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../models/news_category.dart';
 import '../providers/news_provider.dart';
+import '../utils/date_helper.dart';
 import '../widgets/category_chips.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_card.dart';
@@ -71,10 +72,7 @@ class HomeScreen extends StatelessWidget {
     }
 
     if (news.errorMessage != null && news.articles.isEmpty) {
-      return ErrorView(
-        message: news.errorMessage!,
-        onRetry: news.loadTopHeadlines,
-      );
+      return ErrorView(message: news.errorMessage!, onRetry: news.refresh);
     }
 
     if (news.articles.isEmpty) {
@@ -84,10 +82,14 @@ class HomeScreen extends StatelessWidget {
     return Column(
       children: [
         if (news.errorMessage != null)
-          _RefreshErrorBar(message: news.errorMessage!),
+          _SavedNewsBar(
+            isOffline: news.isOffline,
+            message: news.errorMessage!,
+            savedAt: news.savedAt,
+          ),
         Expanded(
           child: RefreshIndicator(
-            onRefresh: news.loadTopHeadlines,
+            onRefresh: news.refresh,
             child: ListView.builder(
               key: PageStorageKey(news.selectedCategory),
               padding: const EdgeInsets.symmetric(vertical: 8),
@@ -107,21 +109,47 @@ class HomeScreen extends StatelessWidget {
   }
 }
 
-/// Red bar shown above the list when a refresh fails.
-class _RefreshErrorBar extends StatelessWidget {
+/// Bar above the list when we could not get fresh news and show saved news.
+class _SavedNewsBar extends StatelessWidget {
+  final bool isOffline;
   final String message;
+  final DateTime? savedAt;
 
-  const _RefreshErrorBar({required this.message});
+  const _SavedNewsBar({
+    required this.isOffline,
+    required this.message,
+    required this.savedAt,
+  });
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final time = savedAt == null ? '' : ' from ${timeAgo(savedAt!)}';
+    final text = isOffline
+        ? 'You are offline. Showing saved news$time.'
+        : '$message\nShowing saved news$time.';
+    final background = isOffline
+        ? colors.secondaryContainer
+        : colors.errorContainer;
+    final foreground = isOffline
+        ? colors.onSecondaryContainer
+        : colors.onErrorContainer;
 
     return Container(
       width: double.infinity,
-      color: colors.errorContainer,
+      color: background,
       padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Text(message, style: TextStyle(color: colors.onErrorContainer)),
+      child: Row(
+        children: [
+          Icon(
+            isOffline ? Icons.wifi_off_rounded : Icons.error_outline,
+            size: 18,
+            color: foreground,
+          ),
+          const SizedBox(width: 8),
+          Expanded(child: Text(text, style: TextStyle(color: foreground))),
+        ],
+      ),
     );
   }
 }

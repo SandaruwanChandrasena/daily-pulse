@@ -42,4 +42,17 @@ class Article {
       url: json['url'] as String? ?? '',
     );
   }
+
+  /// Turns the Article back into JSON in the same shape as NewsAPI,
+  /// so [Article.fromJson] can read it again (used to save news on the phone).
+  Map<String, dynamic> toJson() {
+    return {
+      'source': {'name': sourceName},
+      'title': title,
+      'description': description,
+      'url': url,
+      'urlToImage': imageUrl,
+      'publishedAt': publishedAt.toIso8601String(),
+    };
+  }
 }
