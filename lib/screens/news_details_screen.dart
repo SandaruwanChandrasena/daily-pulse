@@ -115,6 +115,7 @@ class NewsDetailsScreen extends StatelessWidget {
             flexibleSpace: FlexibleSpaceBar(
               background: NewsImage(
                 imageUrl: article.imageUrl,
+                sourceName: article.sourceName,
                 aspectRatio: null,
               ),
             ),

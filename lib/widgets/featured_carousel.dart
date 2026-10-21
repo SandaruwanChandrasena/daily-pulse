@@ -3,9 +3,9 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 
 import '../models/article.dart';
-import '../utils/date_helper.dart';
 import 'category_badge.dart';
 import 'news_image.dart';
+import 'source_and_time.dart';
 
 /// Big top stories as an endless slide show, with dots under them.
 /// Moves every 5 seconds. Stops while a finger touches it.
@@ -156,7 +156,11 @@ class _FeaturedCard extends StatelessWidget {
         child: Stack(
           fit: StackFit.expand,
           children: [
-            NewsImage(imageUrl: article.imageUrl, aspectRatio: null),
+            NewsImage(
+              imageUrl: article.imageUrl,
+              sourceName: article.sourceName,
+              aspectRatio: null,
+            ),
             const DecoratedBox(
               decoration: BoxDecoration(
                 gradient: LinearGradient(
@@ -188,10 +192,8 @@ class _FeaturedCard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 4),
-                  Text(
-                    '${article.sourceName} • ${timeAgo(article.publishedAt)}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  SourceAndTime(
+                    article: article,
                     style: const TextStyle(color: Colors.white70, fontSize: 12),
                   ),
                 ],

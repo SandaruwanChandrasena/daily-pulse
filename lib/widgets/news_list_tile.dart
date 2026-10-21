@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../models/article.dart';
-import '../utils/date_helper.dart';
 import 'bookmark_button.dart';
 import 'news_image.dart';
+import 'source_and_time.dart';
 
 /// One news row: small image, title and "source • time", then a 🔖 button.
 class NewsListTile extends StatelessWidget {
@@ -29,7 +29,11 @@ class NewsListTile extends StatelessWidget {
               child: SizedBox(
                 width: 120,
                 height: 90,
-                child: NewsImage(imageUrl: article.imageUrl, aspectRatio: null),
+                child: NewsImage(
+                  imageUrl: article.imageUrl,
+                  sourceName: article.sourceName,
+                  aspectRatio: null,
+                ),
               ),
             ),
             const SizedBox(width: 12),
@@ -47,10 +51,8 @@ class NewsListTile extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 6),
-                  Text(
-                    '${article.sourceName} • ${timeAgo(article.publishedAt)}',
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
+                  SourceAndTime(
+                    article: article,
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: colors.onSurfaceVariant,
                     ),

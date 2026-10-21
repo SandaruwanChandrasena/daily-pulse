@@ -72,9 +72,11 @@ class HomeScreen extends StatelessWidget {
         .where((article) => article.imageUrl.isNotEmpty)
         .take(_featuredCount)
         .toList();
-    final latest = news.articles
-        .where((article) => !featured.contains(article))
-        .toList();
+    final rest = news.articles.where((article) => !featured.contains(article));
+    final latest = [
+      ...rest.where((article) => article.imageUrl.isNotEmpty),
+      ...rest.where((article) => article.imageUrl.isEmpty),
+    ];
 
     return RefreshIndicator(
       onRefresh: news.refresh,
