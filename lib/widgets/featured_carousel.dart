@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../models/article.dart';
@@ -5,7 +7,8 @@ import '../utils/date_helper.dart';
 import 'category_badge.dart';
 import 'news_image.dart';
 
-/// Big top stories you can swipe left and right, with dots under them.
+/// Big top stories as an endless slide show, with dots under them.
+/// Moves every 5 seconds. Stops while a finger touches it.
 class FeaturedCarousel extends StatefulWidget {
   final List<Article> articles;
   final String badgeText;
@@ -23,52 +26,103 @@ class FeaturedCarousel extends StatefulWidget {
 }
 
 class _FeaturedCarouselState extends State<FeaturedCarousel> {
-  final PageController _controller = PageController();
-  int _currentPage = 0;
+  static const Duration _slideEvery = Duration(seconds: 5);
+  static const Duration _slideSpeed = Duration(milliseconds: 600);
+
+  /// We start far from page 0, so the user can also swipe back "forever".
+  static const int _loopStart = 1000;
+
+  late final PageController _controller;
+  Timer? _timer;
+  late int _currentPage;
+
+  bool get _canLoop => widget.articles.length > 1;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentPage = _canLoop ? widget.articles.length * _loopStart : 0;
+    _controller = PageController(
+      viewportFraction: 0.9,
+      initialPage: _currentPage,
+    );
+    _startAutoSlide();
+  }
+
+  @override
+  void didUpdateWidget(FeaturedCarousel oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.articles.length != widget.articles.length) {
+      _startAutoSlide();
+    }
+  }
 
   @override
   void dispose() {
+    _timer?.cancel();
     _controller.dispose();
     super.dispose();
+  }
+
+  /// Starts (or restarts) the 5-second timer.
+  void _startAutoSlide() {
+    _timer?.cancel();
+    if (!_canLoop) return;
+    _timer = Timer.periodic(_slideEvery, (_) => _nextPage());
+  }
+
+  void _stopAutoSlide() => _timer?.cancel();
+
+  void _nextPage() {
+    if (!_controller.hasClients) return;
+    _controller.nextPage(duration: _slideSpeed, curve: Curves.easeInOut);
   }
 
   @override
   Widget build(BuildContext context) {
     final colors = Theme.of(context).colorScheme;
+    final count = widget.articles.length;
+    if (count == 0) return const SizedBox.shrink();
+    final activeDot = _currentPage % count;
 
     return Column(
       children: [
         SizedBox(
           height: 220,
-          child: PageView.builder(
-            controller: _controller,
-            itemCount: widget.articles.length,
-            onPageChanged: (page) => setState(() => _currentPage = page),
-            itemBuilder: (context, index) {
-              final article = widget.articles[index];
-              return Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16),
-                child: _FeaturedCard(
-                  article: article,
-                  badgeText: widget.badgeText,
-                  onTap: () => widget.onTap(article),
-                ),
-              );
-            },
+          child: Listener(
+            onPointerDown: (_) => _stopAutoSlide(),
+            onPointerUp: (_) => _startAutoSlide(),
+            onPointerCancel: (_) => _startAutoSlide(),
+            child: PageView.builder(
+              controller: _controller,
+              itemCount: _canLoop ? null : count,
+              onPageChanged: (page) => setState(() => _currentPage = page),
+              itemBuilder: (context, index) {
+                final article = widget.articles[index % count];
+                return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 6),
+                  child: _FeaturedCard(
+                    article: article,
+                    badgeText: widget.badgeText,
+                    onTap: () => widget.onTap(article),
+                  ),
+                );
+              },
+            ),
           ),
         ),
         const SizedBox(height: 10),
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            for (var i = 0; i < widget.articles.length; i++)
+            for (var i = 0; i < count; i++)
               AnimatedContainer(
                 duration: const Duration(milliseconds: 200),
                 margin: const EdgeInsets.symmetric(horizontal: 3),
-                width: i == _currentPage ? 18 : 6,
+                width: i == activeDot ? 18 : 6,
                 height: 6,
                 decoration: BoxDecoration(
-                  color: i == _currentPage
+                  color: i == activeDot
                       ? colors.primary
                       : colors.outlineVariant,
                   borderRadius: BorderRadius.circular(3),
@@ -109,31 +163,31 @@ class _FeaturedCard extends StatelessWidget {
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
                   colors: [Colors.transparent, Colors.black87],
-                  stops: [0.35, 1.0],
+                  stops: [0.5, 1.0],
                 ),
               ),
             ),
             Positioned(
-              left: 16,
-              right: 16,
-              bottom: 16,
+              left: 14,
+              right: 14,
+              bottom: 14,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   CategoryBadge(text: badgeText),
-                  const SizedBox(height: 8),
+                  const SizedBox(height: 6),
                   Text(
                     article.title,
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: const TextStyle(
                       color: Colors.white,
-                      fontSize: 19,
-                      fontWeight: FontWeight.w800,
-                      height: 1.25,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      height: 1.3,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 4),
                   Text(
                     '${article.sourceName} • ${timeAgo(article.publishedAt)}',
                     maxLines: 1,
