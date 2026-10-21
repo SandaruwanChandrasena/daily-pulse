@@ -5,15 +5,19 @@ import '../models/article.dart';
 import '../models/news_category.dart';
 import '../providers/news_provider.dart';
 import '../utils/date_helper.dart';
-import '../widgets/category_chips.dart';
+import '../widgets/app_logo.dart';
+import '../widgets/category_tabs.dart';
 import '../widgets/error_view.dart';
-import '../widgets/news_card.dart';
+import '../widgets/featured_carousel.dart';
+import '../widgets/info_bar.dart';
+import '../widgets/news_list_tile.dart';
 import 'news_details_screen.dart';
-import 'search_screen.dart';
 
-/// First screen. Category chips on top, news list below.
+/// Home tab: category tabs, a big top-stories slider, then the latest news.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  static const int _featuredCount = 5;
 
   void _openDetails(BuildContext context, Article article) {
     Navigator.push(
@@ -24,35 +28,15 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  void _openSearch(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) => const SearchScreen()),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Daily Pulse',
-          style: TextStyle(fontWeight: FontWeight.bold),
-        ),
-        centerTitle: true,
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: () => _openSearch(context),
-          ),
-        ],
-      ),
+      appBar: AppBar(title: const AppLogo(), centerTitle: false),
       body: Consumer<NewsProvider>(
         builder: (context, news, child) {
           return Column(
             children: [
-              CategoryChips(
+              CategoryTabs(
                 categories: NewsCategory.all,
                 selectedId: news.selectedCategory,
                 onSelected: news.selectCategory,
@@ -65,7 +49,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  /// Picks what to show under the chips: spinner, error, empty text or list.
+  /// Picks what to show under the tabs: spinner, error, empty text or news.
   Widget _buildNewsArea(BuildContext context, NewsProvider news) {
     if (news.isLoading && news.articles.isEmpty) {
       return const Center(child: CircularProgressIndicator());
@@ -79,76 +63,105 @@ class HomeScreen extends StatelessWidget {
       return const Center(child: Text('No news found.'));
     }
 
-    return Column(
-      children: [
-        if (news.errorMessage != null)
-          _SavedNewsBar(
-            isOffline: news.isOffline,
-            message: news.errorMessage!,
-            savedAt: news.savedAt,
-          ),
-        Expanded(
-          child: RefreshIndicator(
-            onRefresh: news.refresh,
-            child: ListView.builder(
-              key: PageStorageKey(news.selectedCategory),
-              padding: const EdgeInsets.symmetric(vertical: 8),
-              itemCount: news.articles.length,
+    final category = NewsCategory.byId(news.selectedCategory);
+    final featured = news.articles
+        .where((article) => article.imageUrl.isNotEmpty)
+        .take(_featuredCount)
+        .toList();
+    final latest = news.articles
+        .where((article) => !featured.contains(article))
+        .toList();
+
+    return RefreshIndicator(
+      onRefresh: news.refresh,
+      child: CustomScrollView(
+        key: PageStorageKey(category.id),
+        slivers: [
+          if (news.errorMessage != null)
+            SliverToBoxAdapter(child: _savedNewsBar(context, news)),
+          if (category.note != null)
+            SliverToBoxAdapter(child: _noteBar(context, category.note!)),
+          if (featured.isNotEmpty)
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: FeaturedCarousel(
+                  key: ValueKey(category.id),
+                  articles: featured,
+                  badgeText: category.label,
+                  onTap: (article) => _openDetails(context, article),
+                ),
+              ),
+            ),
+          if (latest.isNotEmpty) ...[
+            const SliverToBoxAdapter(child: _SectionTitle('Latest News')),
+            SliverList.builder(
+              itemCount: latest.length,
               itemBuilder: (context, index) {
-                final article = news.articles[index];
-                return NewsCard(
+                final article = latest[index];
+                return NewsListTile(
                   article: article,
                   onTap: () => _openDetails(context, article),
                 );
               },
             ),
-          ),
-        ),
-      ],
+          ],
+          const SliverToBoxAdapter(child: SizedBox(height: 16)),
+        ],
+      ),
+    );
+  }
+
+  /// Shown when we could not get fresh news, so we show saved news.
+  Widget _savedNewsBar(BuildContext context, NewsProvider news) {
+    final colors = Theme.of(context).colorScheme;
+    final savedAt = news.savedAt;
+    final time = savedAt == null ? '' : ' from ${timeAgo(savedAt)}';
+
+    if (news.isOffline) {
+      return InfoBar(
+        icon: Icons.wifi_off_rounded,
+        text: 'You are offline. Showing saved news$time.',
+        background: colors.secondaryContainer,
+        foreground: colors.onSecondaryContainer,
+      );
+    }
+
+    return InfoBar(
+      icon: Icons.error_outline,
+      text: '${news.errorMessage}\nShowing saved news$time.',
+      background: colors.errorContainer,
+      foreground: colors.onErrorContainer,
+    );
+  }
+
+  Widget _noteBar(BuildContext context, String note) {
+    final colors = Theme.of(context).colorScheme;
+
+    return InfoBar(
+      icon: Icons.info_outline,
+      text: note,
+      background: colors.surfaceContainerHighest,
+      foreground: colors.onSurfaceVariant,
     );
   }
 }
 
-/// Bar above the list when we could not get fresh news and show saved news.
-class _SavedNewsBar extends StatelessWidget {
-  final bool isOffline;
-  final String message;
-  final DateTime? savedAt;
+/// A bold section title, like "Latest News".
+class _SectionTitle extends StatelessWidget {
+  final String text;
 
-  const _SavedNewsBar({
-    required this.isOffline,
-    required this.message,
-    required this.savedAt,
-  });
+  const _SectionTitle(this.text);
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final time = savedAt == null ? '' : ' from ${timeAgo(savedAt!)}';
-    final text = isOffline
-        ? 'You are offline. Showing saved news$time.'
-        : '$message\nShowing saved news$time.';
-    final background = isOffline
-        ? colors.secondaryContainer
-        : colors.errorContainer;
-    final foreground = isOffline
-        ? colors.onSecondaryContainer
-        : colors.onErrorContainer;
-
-    return Container(
-      width: double.infinity,
-      color: background,
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-      child: Row(
-        children: [
-          Icon(
-            isOffline ? Icons.wifi_off_rounded : Icons.error_outline,
-            size: 18,
-            color: foreground,
-          ),
-          const SizedBox(width: 8),
-          Expanded(child: Text(text, style: TextStyle(color: foreground))),
-        ],
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
+      child: Text(
+        text,
+        style: Theme.of(context).textTheme.titleMedium?.copyWith(
+          fontWeight: FontWeight.w800,
+        ),
       ),
     );
   }

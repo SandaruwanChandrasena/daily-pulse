@@ -46,10 +46,12 @@ class NewsApiService {
   }
 
   /// Searches all news for a keyword (newest first).
-  Future<List<Article>> searchNews(String query) async {
+  /// [searchIn] is optional, like 'title' to only match words in the title.
+  Future<List<Article>> searchNews(String query, {String? searchIn}) async {
     final uri = Uri.parse('$_baseUrl/everything').replace(
       queryParameters: {
         'q': query,
+        'searchIn': ?searchIn,
         'language': 'en',
         'sortBy': 'publishedAt',
         'pageSize': '30',

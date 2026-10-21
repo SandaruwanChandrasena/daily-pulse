@@ -1,18 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'config/app_theme.dart';
 import 'providers/news_provider.dart';
 import 'providers/search_provider.dart';
-import 'screens/home_screen.dart';
+import 'screens/main_shell.dart';
 
 void main() {
   runApp(
     // Makes every provider available to all screens below it.
     MultiProvider(
       providers: [
-        ChangeNotifierProvider(
-          create: (_) => NewsProvider()..loadTopHeadlines(),
-        ),
+        ChangeNotifierProvider(create: (_) => NewsProvider()..loadNews()),
         ChangeNotifierProvider(
           create: (_) => SearchProvider()..loadHistory(),
         ),
@@ -30,11 +29,8 @@ class DailyPulseApp extends StatelessWidget {
     return MaterialApp(
       title: 'Daily Pulse',
       debugShowCheckedModeBanner: false,
-      theme: ThemeData(
-        useMaterial3: true,
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
-      ),
-      home: const HomeScreen(),
+      theme: AppTheme.light(),
+      home: const MainShell(),
     );
   }
 }

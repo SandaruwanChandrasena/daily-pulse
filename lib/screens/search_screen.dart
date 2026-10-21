@@ -4,11 +4,11 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../providers/search_provider.dart';
 import '../widgets/error_view.dart';
-import '../widgets/news_card.dart';
+import '../widgets/news_list_tile.dart';
 import '../widgets/recent_searches.dart';
 import 'news_details_screen.dart';
 
-/// Search box in the AppBar and the results below it.
+/// Search tab: search box in the AppBar, recent searches or results below.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -60,7 +60,6 @@ class _SearchScreenState extends State<SearchScreen> {
       appBar: AppBar(
         title: TextField(
           controller: _textController,
-          autofocus: _textController.text.isEmpty,
           textInputAction: TextInputAction.search,
           decoration: const InputDecoration(
             hintText: 'Search news...',
@@ -123,7 +122,10 @@ class _SearchScreenState extends State<SearchScreen> {
       itemCount: search.articles.length,
       itemBuilder: (context, index) {
         final article = search.articles[index];
-        return NewsCard(article: article, onTap: () => _openDetails(article));
+        return NewsListTile(
+          article: article,
+          onTap: () => _openDetails(article),
+        );
       },
     );
   }

@@ -36,15 +36,15 @@ class NewsProvider extends ChangeNotifier {
 
     _selectedCategory = categoryId;
     notifyListeners();
-    loadTopHeadlines();
+    loadNews();
   }
 
   /// For pull to refresh and "Try again": always asks the API.
-  Future<void> refresh() => loadTopHeadlines(forceRefresh: true);
+  Future<void> refresh() => loadNews(forceRefresh: true);
 
   /// 1. Show saved news from the phone. 2. Skip the API if the news is fresh.
   /// 3. Otherwise get fresh news from the API and save it.
-  Future<void> loadTopHeadlines({bool forceRefresh = false}) async {
+  Future<void> loadNews({bool forceRefresh = false}) async {
     final category = _selectedCategory;
     if (_loadingCategories.contains(category)) return;
 
@@ -68,9 +68,7 @@ class NewsProvider extends ChangeNotifier {
     }
 
     try {
-      final freshNews = await _apiService.fetchTopHeadlines(
-        category: category,
-      );
+      final freshNews = await _fetchFromApi(category);
       final now = DateTime.now();
       _articlesByCategory[category] = freshNews;
       _savedAtByCategory[category] = now;
@@ -86,11 +84,20 @@ class NewsProvider extends ChangeNotifier {
     } catch (e) {
       _errorsByCategory[category] = 'Something went wrong. Please try again.';
       _offlineCategories.remove(category);
-      debugPrint('loadTopHeadlines error: $e');
+      debugPrint('loadNews error: $e');
     }
 
     _loadingCategories.remove(category);
     notifyListeners();
+  }
+
+  /// Sri Lanka uses search (title only). Other categories use top headlines.
+  Future<List<Article>> _fetchFromApi(String categoryId) {
+    final category = NewsCategory.byId(categoryId);
+    if (category.usesSearch) {
+      return _apiService.searchNews(category.searchQuery!, searchIn: 'title');
+    }
+    return _apiService.fetchTopHeadlines(category: category.id);
   }
 
   bool _isFresh(String category) {
