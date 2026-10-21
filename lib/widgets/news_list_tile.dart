@@ -39,10 +39,10 @@ class NewsListTile extends StatelessWidget {
                 children: [
                   Text(
                     article.title,
-                    maxLines: 3,
+                    maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleSmall?.copyWith(
-                      fontWeight: FontWeight.w600,
+                      fontWeight: FontWeight.w500,
                       height: 1.3,
                     ),
                   ),
