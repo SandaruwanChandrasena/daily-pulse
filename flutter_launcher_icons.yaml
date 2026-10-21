@@ -1,0 +1,8 @@
+# Settings for the app icon tool. Run: dart run flutter_launcher_icons
+flutter_launcher_icons:
+  android: true
+  ios: false
+  image_path: "assets/icon/icon.png"
+  adaptive_icon_background: "#D32F2F"
+  adaptive_icon_foreground: "assets/icon/icon_foreground.png"
+  min_sdk_android: 21
