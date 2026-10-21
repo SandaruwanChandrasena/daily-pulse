@@ -24,11 +24,22 @@ class NewsProvider extends ChangeNotifier {
   final Set<String> _offlineCategories = {};
 
   String get selectedCategory => _selectedCategory;
-  List<Article> get articles => _articlesByCategory[_selectedCategory] ?? [];
-  bool get isLoading => _loadingCategories.contains(_selectedCategory);
-  String? get errorMessage => _errorsByCategory[_selectedCategory];
+  List<Article> get articles => articlesFor(_selectedCategory);
+  bool get isLoading => isLoadingFor(_selectedCategory);
+  String? get errorMessage => errorFor(_selectedCategory);
   bool get isOffline => _offlineCategories.contains(_selectedCategory);
   DateTime? get savedAt => _savedAtByCategory[_selectedCategory];
+
+  /// The news we already have for any category (no API call).
+  List<Article> articlesFor(String categoryId) {
+    return _articlesByCategory[categoryId] ?? [];
+  }
+
+  bool isLoadingFor(String categoryId) {
+    return _loadingCategories.contains(categoryId);
+  }
+
+  String? errorFor(String categoryId) => _errorsByCategory[categoryId];
 
   /// Switches category. The 15-minute rule decides if we call the API.
   void selectCategory(String categoryId) {
@@ -42,10 +53,14 @@ class NewsProvider extends ChangeNotifier {
   /// For pull to refresh and "Try again": always asks the API.
   Future<void> refresh() => loadNews(forceRefresh: true);
 
+  /// Loads [categoryId] (or the selected category if null).
   /// 1. Show saved news from the phone. 2. Skip the API if the news is fresh.
   /// 3. Otherwise get fresh news from the API and save it.
-  Future<void> loadNews({bool forceRefresh = false}) async {
-    final category = _selectedCategory;
+  Future<void> loadNews({
+    String? categoryId,
+    bool forceRefresh = false,
+  }) async {
+    final category = categoryId ?? _selectedCategory;
     if (_loadingCategories.contains(category)) return;
 
     _loadingCategories.add(category);

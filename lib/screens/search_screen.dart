@@ -1,14 +1,19 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../config/topics.dart';
 import '../models/article.dart';
 import '../providers/search_provider.dart';
 import '../widgets/error_view.dart';
 import '../widgets/news_list_tile.dart';
+import '../widgets/page_title.dart';
 import '../widgets/recent_searches.dart';
+import '../widgets/search_field.dart';
+import '../widgets/section_title.dart';
+import '../widgets/topic_chips.dart';
 import 'news_details_screen.dart';
 
-/// Search tab: search box in the AppBar, recent searches or results below.
+/// Search tab: big title, rounded search box, then ideas or results below.
 class SearchScreen extends StatefulWidget {
   const SearchScreen({super.key});
 
@@ -17,32 +22,45 @@ class SearchScreen extends StatefulWidget {
 }
 
 class _SearchScreenState extends State<SearchScreen> {
+  late final SearchProvider _search;
   late final TextEditingController _textController;
 
   @override
   void initState() {
     super.initState();
-    final lastQuery = context.read<SearchProvider>().query;
-    _textController = TextEditingController(text: lastQuery);
+    _search = context.read<SearchProvider>();
+    _textController = TextEditingController(text: _search.query);
+    _search.addListener(_showQueryInBox);
   }
 
   @override
   void dispose() {
+    _search.removeListener(_showQueryInBox);
     _textController.dispose();
     super.dispose();
   }
 
-  void _clearSearch() {
-    _textController.clear();
-    context.read<SearchProvider>().clear();
-    setState(() {});
+  /// Explore can start a search, so we copy the new word into the box.
+  void _showQueryInBox() {
+    final query = _search.query;
+    if (query.isNotEmpty && query != _textController.text.trim()) {
+      _textController.text = query;
+    }
   }
 
-  void _searchAgain(String word) {
-    _textController.text = word;
+  void _submit(String text) {
     FocusScope.of(context).unfocus();
-    setState(() {});
-    context.read<SearchProvider>().search(word);
+    _search.search(text);
+  }
+
+  void _searchWord(String word) {
+    _textController.text = word;
+    _submit(word);
+  }
+
+  void _clear() {
+    _textController.clear();
+    _search.clear();
   }
 
   void _openDetails(Article article) {
@@ -57,49 +75,30 @@ class _SearchScreenState extends State<SearchScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: TextField(
-          controller: _textController,
-          textInputAction: TextInputAction.search,
-          decoration: const InputDecoration(
-            hintText: 'Search news...',
-            border: InputBorder.none,
-          ),
-          onChanged: (_) => setState(() {}),
-          onSubmitted: (text) => context.read<SearchProvider>().search(text),
-        ),
-        actions: [
-          if (_textController.text.isNotEmpty)
-            IconButton(
-              icon: const Icon(Icons.clear),
-              tooltip: 'Clear',
-              onPressed: _clearSearch,
+      appBar: AppBar(title: const PageTitle('Search'), centerTitle: false),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 4, 16, 8),
+            child: SearchField(
+              controller: _textController,
+              onSubmitted: _submit,
+              onClear: _clear,
             ),
+          ),
+          Expanded(
+            child: Consumer<SearchProvider>(
+              builder: (context, search, child) => _buildBody(search),
+            ),
+          ),
         ],
-      ),
-      body: Consumer<SearchProvider>(
-        builder: (context, search, child) => _buildResults(search),
       ),
     );
   }
 
-  /// Picks what to show: recent searches, start message, spinner, error or list.
-  Widget _buildResults(SearchProvider search) {
-    if (!search.hasSearched && search.history.isNotEmpty) {
-      return RecentSearches(
-        words: search.history,
-        onTap: _searchAgain,
-        onRemove: search.removeFromHistory,
-        onClearAll: search.clearHistory,
-      );
-    }
-
-    if (!search.hasSearched) {
-      return const _MessageView(
-        icon: Icons.search,
-        message: 'Type a word and press search.\nFor example: "AI" or "football".',
-      );
-    }
+  /// Picks what to show: ideas, spinner, error, no results or the results.
+  Widget _buildBody(SearchProvider search) {
+    if (!search.hasSearched) return _buildIdeas(search);
 
     if (search.isLoading) {
       return const Center(child: CircularProgressIndicator());
@@ -116,12 +115,48 @@ class _SearchScreenState extends State<SearchScreen> {
       );
     }
 
+    return _buildResults(search);
+  }
+
+  /// Before a search: recent searches (if any) and trending topics.
+  Widget _buildIdeas(SearchProvider search) {
+    return ListView(
+      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+      padding: const EdgeInsets.only(bottom: 16),
+      children: [
+        if (search.history.isNotEmpty)
+          RecentSearches(
+            words: search.history,
+            onTap: _searchWord,
+            onRemove: search.removeFromHistory,
+            onClearAll: search.clearHistory,
+          ),
+        const SectionTitle(text: 'Trending Topics'),
+        TopicChips(
+          topics: Topics.trending,
+          hotTopics: Topics.hot,
+          onTap: _searchWord,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildResults(SearchProvider search) {
+    final articles = search.articles;
+
     return ListView.builder(
       keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      itemCount: search.articles.length,
+      padding: const EdgeInsets.only(bottom: 16),
+      itemCount: articles.length + 1,
       itemBuilder: (context, index) {
-        final article = search.articles[index];
+        if (index == 0) {
+          return SectionTitle(
+            text: 'Search Results (${articles.length})',
+            actionLabel: 'Clear',
+            onAction: _clear,
+          );
+        }
+        final article = articles[index - 1];
         return NewsListTile(
           article: article,
           onTap: () => _openDetails(article),

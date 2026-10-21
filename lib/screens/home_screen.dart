@@ -11,6 +11,7 @@ import '../widgets/error_view.dart';
 import '../widgets/featured_carousel.dart';
 import '../widgets/info_bar.dart';
 import '../widgets/news_list_tile.dart';
+import '../widgets/section_title.dart';
 import 'news_details_screen.dart';
 
 /// Home tab: category tabs, a big top-stories slider, then the latest news.
@@ -94,7 +95,9 @@ class HomeScreen extends StatelessWidget {
               ),
             ),
           if (latest.isNotEmpty) ...[
-            const SliverToBoxAdapter(child: _SectionTitle('Latest News')),
+            const SliverToBoxAdapter(
+              child: SectionTitle(text: 'Latest News'),
+            ),
             SliverList.builder(
               itemCount: latest.length,
               itemBuilder: (context, index) {
@@ -143,26 +146,6 @@ class HomeScreen extends StatelessWidget {
       text: note,
       background: colors.surfaceContainerHighest,
       foreground: colors.onSurfaceVariant,
-    );
-  }
-}
-
-/// A bold section title, like "Latest News".
-class _SectionTitle extends StatelessWidget {
-  final String text;
-
-  const _SectionTitle(this.text);
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 20, 16, 4),
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          fontWeight: FontWeight.w800,
-        ),
-      ),
     );
   }
 }

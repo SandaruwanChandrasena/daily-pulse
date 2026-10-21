@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 
-/// A list of recent search words. Tap to search again, ✖ to remove one.
+import 'section_title.dart';
+
+/// Recent search words. Tap to search again. Swipe a row to remove it.
 class RecentSearches extends StatelessWidget {
   final List<String> words;
   final ValueChanged<String> onTap;
@@ -17,37 +19,51 @@ class RecentSearches extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
+    final colors = Theme.of(context).colorScheme;
 
-    return ListView(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 8, 4),
-          child: Row(
-            children: [
-              Expanded(
-                child: Text(
-                  'Recent searches',
-                  style: theme.textTheme.titleSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ),
-              TextButton(onPressed: onClearAll, child: const Text('Clear all')),
-            ],
-          ),
+        SectionTitle(
+          text: 'Recent Searches',
+          actionLabel: 'Clear All',
+          onAction: onClearAll,
         ),
         for (final word in words)
-          ListTile(
-            leading: const Icon(Icons.history),
-            title: Text(word),
-            trailing: IconButton(
-              icon: const Icon(Icons.close),
-              tooltip: 'Remove',
-              onPressed: () => onRemove(word),
+          Dismissible(
+            key: ValueKey('recent-$word'),
+            onDismissed: (_) => onRemove(word),
+            background: Container(
+              color: colors.errorContainer,
+              padding: const EdgeInsets.symmetric(horizontal: 20),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Icon(Icons.delete_outline, color: colors.onErrorContainer),
+                  Icon(Icons.delete_outline, color: colors.onErrorContainer),
+                ],
+              ),
             ),
-            onTap: () => onTap(word),
+            child: Column(
+              children: [
+                ListTile(
+                  visualDensity: VisualDensity.compact,
+                  leading: Icon(Icons.history, color: colors.onSurfaceVariant),
+                  title: Text(word),
+                  trailing: Icon(
+                    Icons.chevron_right,
+                    color: colors.onSurfaceVariant,
+                  ),
+                  onTap: () => onTap(word),
+                ),
+                Divider(
+                  height: 1,
+                  indent: 16,
+                  endIndent: 16,
+                  color: colors.outlineVariant,
+                ),
+              ],
+            ),
           ),
       ],
     );

@@ -1,46 +1,45 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
+import '../providers/navigation_provider.dart';
+import 'explore_screen.dart';
 import 'home_screen.dart';
 import 'placeholder_screen.dart';
 import 'search_screen.dart';
 
 /// The app frame: 5 tabs and the bottom navigation bar.
-/// IndexedStack keeps every tab alive, so each tab remembers its scroll and data.
-class MainShell extends StatefulWidget {
+/// NavigationProvider knows the open tab. IndexedStack keeps all tabs alive.
+class MainShell extends StatelessWidget {
   const MainShell({super.key});
-
-  @override
-  State<MainShell> createState() => _MainShellState();
-}
-
-class _MainShellState extends State<MainShell> {
-  int _currentTab = 0;
 
   static const List<Widget> _tabs = [
     HomeScreen(),
-    PlaceholderScreen(title: 'Explore', icon: Icons.explore_outlined),
+    ExploreScreen(),
     SearchScreen(),
     PlaceholderScreen(title: 'Saved', icon: Icons.bookmark_border),
     PlaceholderScreen(title: 'Settings', icon: Icons.settings_outlined),
   ];
 
-  void _selectTab(int index) {
+  void _goTo(BuildContext context, AppTab tab) {
     FocusScope.of(context).unfocus();
-    setState(() => _currentTab = index);
+    context.read<NavigationProvider>().goTo(tab);
   }
 
   @override
   Widget build(BuildContext context) {
+    final currentTab = context.watch<NavigationProvider>().currentTab;
+
     return PopScope(
-      canPop: _currentTab == 0,
+      canPop: currentTab == AppTab.home,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _selectTab(0);
+        if (!didPop) _goTo(context, AppTab.home);
       },
       child: Scaffold(
-        body: IndexedStack(index: _currentTab, children: _tabs),
+        body: IndexedStack(index: currentTab.index, children: _tabs),
         bottomNavigationBar: NavigationBar(
-          selectedIndex: _currentTab,
-          onDestinationSelected: _selectTab,
+          selectedIndex: currentTab.index,
+          onDestinationSelected: (index) =>
+              _goTo(context, AppTab.values[index]),
           destinations: const [
             NavigationDestination(
               icon: Icon(Icons.home_outlined),
