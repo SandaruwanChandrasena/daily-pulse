@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../models/article.dart';
 import '../utils/date_helper.dart';
+import '../widgets/bookmark_button.dart';
 import '../widgets/news_image.dart';
 import 'article_web_view_screen.dart';
 
@@ -30,7 +31,10 @@ class NewsDetailsScreen extends StatelessWidget {
     final colors = theme.colorScheme;
 
     return Scaffold(
-      appBar: AppBar(title: Text(article.sourceName)),
+      appBar: AppBar(
+        title: Text(article.sourceName),
+        actions: [BookmarkButton(article: article, color: colors.onSurface)],
+      ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.only(bottom: 24),
         child: Column(

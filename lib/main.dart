@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'config/app_theme.dart';
+import 'providers/bookmark_provider.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/news_provider.dart';
 import 'providers/search_provider.dart';
@@ -17,6 +18,7 @@ void main() {
         ChangeNotifierProvider(
           create: (_) => SearchProvider()..loadHistory(),
         ),
+        ChangeNotifierProvider(create: (_) => BookmarkProvider()..load()),
       ],
       child: const DailyPulseApp(),
     ),

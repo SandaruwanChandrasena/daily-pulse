@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 
 import '../models/article.dart';
 import '../utils/date_helper.dart';
+import 'bookmark_button.dart';
 import 'news_image.dart';
 
-/// One news row: small image on the left, title and "source • time" on the right.
+/// One news row: small image, title and "source • time", then a 🔖 button.
 class NewsListTile extends StatelessWidget {
   final Article article;
   final VoidCallback onTap;
@@ -19,7 +20,7 @@ class NewsListTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -57,6 +58,7 @@ class NewsListTile extends StatelessWidget {
                 ],
               ),
             ),
+            BookmarkButton(article: article),
           ],
         ),
       ),

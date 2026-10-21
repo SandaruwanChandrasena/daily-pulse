@@ -5,6 +5,7 @@ import '../providers/navigation_provider.dart';
 import 'explore_screen.dart';
 import 'home_screen.dart';
 import 'placeholder_screen.dart';
+import 'saved_screen.dart';
 import 'search_screen.dart';
 
 /// The app frame: 5 tabs and the bottom navigation bar.
@@ -16,7 +17,7 @@ class MainShell extends StatelessWidget {
     HomeScreen(),
     ExploreScreen(),
     SearchScreen(),
-    PlaceholderScreen(title: 'Saved', icon: Icons.bookmark_border),
+    SavedScreen(),
     PlaceholderScreen(title: 'Settings', icon: Icons.settings_outlined),
   ];
 
