@@ -186,8 +186,8 @@ class _FeaturedCard extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
                       color: Colors.white,
-                      fontSize: 17,
-                      fontWeight: FontWeight.w700,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w600,
                       height: 1.3,
                       shadows: const [
                         Shadow(color: Colors.black54, blurRadius: 6),
