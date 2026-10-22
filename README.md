@@ -29,23 +29,23 @@ Browse top headlines by category, search the news, save stories for later, and r
 
 <table>
   <tr>
-    <td align="center"><img src="screenshots/onboarding.png" width="220"><br><b>Welcome</b></td>
-    <td align="center"><img src="screenshots/interests.png" width="220"><br><b>Choose interests</b></td>
-    <td align="center"><img src="screenshots/home_light.png" width="220"><br><b>Home</b></td>
+    <td align="center"><img src="screenshots/onboarding.jpg" width="220"><br><b>Welcome</b></td>
+    <td align="center"><img src="screenshots/interests.jpg" width="220"><br><b>Choose interests</b></td>
+    <td align="center"><img src="screenshots/home_light.jpg" width="220"><br><b>Home</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/details.png" width="220"><br><b>News details</b></td>
-    <td align="center"><img src="screenshots/explore.png" width="220"><br><b>Explore</b></td>
-    <td align="center"><img src="screenshots/live_search.png" width="220"><br><b>Live search</b></td>
+    <td align="center"><img src="screenshots/details.jpg" width="220"><br><b>News details</b></td>
+    <td align="center"><img src="screenshots/explore.jpg" width="220"><br><b>Explore</b></td>
+    <td align="center"><img src="screenshots/live_search.jpg" width="220"><br><b>Live search</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/saved.png" width="220"><br><b>Saved</b></td>
-    <td align="center"><img src="screenshots/settings.png" width="220"><br><b>Settings</b></td>
-    <td align="center"><img src="screenshots/offline.png" width="220"><br><b>Offline mode</b></td>
+    <td align="center"><img src="screenshots/saved.jpg" width="220"><br><b>Saved</b></td>
+    <td align="center"><img src="screenshots/settings.jpg" width="220"><br><b>Settings</b></td>
+    <td align="center"><img src="screenshots/offline.jpg" width="220"><br><b>Offline mode</b></td>
   </tr>
   <tr>
-    <td align="center"><img src="screenshots/home_dark.png" width="220"><br><b>Home (dark)</b></td>
-    <td align="center"><img src="screenshots/details_dark.png" width="220"><br><b>Details (dark)</b></td>
+    <td align="center"><img src="screenshots/home_dark.jpg" width="220"><br><b>Home (dark)</b></td>
+    <td align="center"><img src="screenshots/details_dark.jpg" width="220"><br><b>Details (dark)</b></td>
     <td></td>
   </tr>
 </table>
