@@ -1,6 +1,6 @@
 # 📝 Daily Pulse — Learning Log
 
-I built Daily Pulse in one week (18–25 Oct 2026) to learn Flutter.
+I built Daily Pulse to learn Flutter.
 I came from **JavaScript**, and this was my first real Flutter app.
 
 This log lists the problems I hit, **why** they happened, **how** I fixed them, and what I learned.
@@ -12,18 +12,6 @@ This log lists the problems I hit, **why** they happened, **how** I fixed them, 
 1. **Always test the release build.** My app saved nothing in release mode, but worked perfectly in debug. (See [#1](#1-nothing-was-saved-in-the-release-build).)
 2. **A `try/catch` that only prints can hide a real bug.** It kept the app alive, but it also hid the error from me.
 3. **Read the error message, slowly.** The file path and the first line usually tell you exactly where the problem is.
-
----
-
-## 📅 How the Week Went
-
-| Day | Work |
-|---|---|
-| Sun 18 | Planned the app, set the deadline |
-| Mon 19 – Tue 20 | Setup, NewsAPI, details + WebView, categories, search + history |
-| Wed 21 | Full UI redesign, bottom nav, Explore, bookmarks, details, share, settings, dark mode, offline mode, live search, banner slider |
-| Thu 22 | Found and fixed the release bug, unit tests, pagination, welcome screens, folders, fonts, docs |
-| Fri 23 – Sun 25 | APK, final testing, demo video |
 
 ---
 
