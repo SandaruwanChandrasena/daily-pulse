@@ -157,6 +157,9 @@ class _SearchScreenState extends State<SearchScreen> {
       children: [
         ListTile(
           leading: Icon(Icons.travel_explore, color: colors.primary),
+          titleTextStyle: Theme.of(
+            context,
+          ).textTheme.bodyLarge?.copyWith(fontSize: 15),
           title: Text.rich(
             TextSpan(
               children: [

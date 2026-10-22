@@ -31,11 +31,17 @@ class AppTheme {
     );
   }
 
-  /// Builds the theme from a color set, so light and dark look the same.
+  /// Builds the theme from a color set. Text styles for list rows, dialogs,
+  /// buttons and snack bars come from our fonts, so every page matches Home.
   static ThemeData _build(ColorScheme colors) {
-    final theme = ThemeData(
+    final text = _textTheme(
+      ThemeData(useMaterial3: true, colorScheme: colors).textTheme,
+    );
+
+    return ThemeData(
       useMaterial3: true,
       colorScheme: colors,
+      textTheme: text,
       scaffoldBackgroundColor: colors.surface,
       appBarTheme: AppBarTheme(
         backgroundColor: colors.surface,
@@ -43,6 +49,50 @@ class AppTheme {
         surfaceTintColor: Colors.transparent,
         scrolledUnderElevation: 0,
         elevation: 0,
+        titleTextStyle: text.titleLarge?.copyWith(
+          fontSize: 18,
+          fontWeight: FontWeight.w700,
+          color: colors.onSurface,
+        ),
+      ),
+      listTileTheme: ListTileThemeData(
+        titleTextStyle: text.bodyLarge?.copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+          height: 1.3,
+          color: colors.onSurface,
+        ),
+        subtitleTextStyle: text.bodyMedium?.copyWith(
+          fontSize: 13,
+          height: 1.35,
+          color: colors.onSurfaceVariant,
+        ),
+      ),
+      segmentedButtonTheme: SegmentedButtonThemeData(
+        style: ButtonStyle(
+          textStyle: WidgetStatePropertyAll(
+            text.labelLarge?.copyWith(fontSize: 13, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ),
+      dialogTheme: DialogThemeData(
+        titleTextStyle: text.titleLarge?.copyWith(
+          fontSize: 20,
+          fontWeight: FontWeight.w800,
+          color: colors.onSurface,
+        ),
+        contentTextStyle: text.bodyMedium?.copyWith(
+          fontSize: 15,
+          height: 1.5,
+          color: colors.onSurfaceVariant,
+        ),
+      ),
+      snackBarTheme: SnackBarThemeData(
+        contentTextStyle: text.bodyMedium?.copyWith(
+          fontSize: 14,
+          fontWeight: FontWeight.w500,
+          color: colors.onInverseSurface,
+        ),
       ),
       navigationBarTheme: NavigationBarThemeData(
         backgroundColor: colors.surface,
@@ -66,7 +116,6 @@ class AppTheme {
         }),
       ),
     );
-    return theme.copyWith(textTheme: _textTheme(theme.textTheme));
   }
 
   /// Titles use Archivo. Body text uses Inter with more line height.

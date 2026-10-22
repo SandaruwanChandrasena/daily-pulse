@@ -202,8 +202,9 @@ class _ArticleBody extends StatelessWidget {
           Text(
             article.title,
             style: theme.textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w800,
-              height: 1.3,
+              fontSize: 22,
+              fontWeight: FontWeight.w700,
+              height: 1.35,
             ),
           ),
           const SizedBox(height: 18),
@@ -230,7 +231,7 @@ class _ArticleBody extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: theme.textTheme.bodyMedium?.copyWith(
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w600,
                       ),
                     ),
                     Text(

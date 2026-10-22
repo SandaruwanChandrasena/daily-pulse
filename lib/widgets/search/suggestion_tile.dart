@@ -64,6 +64,9 @@ class SuggestionTile extends StatelessWidget {
     return ListTile(
       visualDensity: VisualDensity.compact,
       leading: Icon(_icon, color: colors.onSurfaceVariant),
+      titleTextStyle: Theme.of(
+        context,
+      ).textTheme.bodyLarge?.copyWith(fontSize: 15),
       title: Text.rich(_highlightedText(colors.onSurface)),
       trailing: IconButton(
         icon: const Icon(Icons.north_west, size: 20),

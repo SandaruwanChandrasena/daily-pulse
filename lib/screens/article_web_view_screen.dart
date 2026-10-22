@@ -105,7 +105,14 @@ class _ArticleWebViewScreenState extends State<ArticleWebViewScreen> {
             tooltip: 'Close',
             onPressed: () => Navigator.of(context).pop(),
           ),
-          title: Text(widget.title, overflow: TextOverflow.ellipsis),
+          title: Text(
+            widget.title,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.bodyLarge?.copyWith(
+              fontSize: 15,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           actions: [
             IconButton(
               icon: const Icon(Icons.refresh),

@@ -49,6 +49,9 @@ class RecentSearches extends StatelessWidget {
                 ListTile(
                   visualDensity: VisualDensity.compact,
                   leading: Icon(Icons.history, color: colors.onSurfaceVariant),
+                  titleTextStyle: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge?.copyWith(fontSize: 15),
                   title: Text(word),
                   trailing: Icon(
                     Icons.chevron_right,

@@ -28,6 +28,7 @@ class SearchField extends StatelessWidget {
       textInputAction: TextInputAction.search,
       onSubmitted: onSubmitted,
       onChanged: onChanged,
+      style: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 15),
       decoration: InputDecoration(
         hintText: 'Search news...',
         prefixIcon: const Icon(Icons.search),

@@ -12,7 +12,6 @@ import '../providers/theme_provider.dart';
 import '../utils/confirm_dialog.dart';
 import '../widgets/common/app_logo.dart';
 import '../widgets/common/page_title.dart';
-import '../widgets/common/section_title.dart';
 import 'interests_screen.dart';
 
 /// Settings tab: app card, theme choice, clear data and about.
@@ -115,7 +114,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
         padding: const EdgeInsets.only(bottom: 16),
         children: [
           const _AppCard(),
-          const SectionTitle(text: 'Appearance'),
+          const _GroupLabel('Appearance'),
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8),
             child: SegmentedButton<ThemeMode>(
@@ -143,7 +142,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   context.read<ThemeProvider>().setThemeMode(selection.first),
             ),
           ),
-          const SectionTitle(text: 'Personalize'),
+          const _GroupLabel('Personalize'),
           ListTile(
             leading: const Icon(Icons.tune),
             title: const Text('My news interests'),
@@ -164,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: const Text('See the first-time screens one more time'),
             onTap: () => context.read<OnboardingProvider>().showAgain(),
           ),
-          const SectionTitle(text: 'Storage'),
+          const _GroupLabel('Storage'),
           ListTile(
             leading: const Icon(Icons.history),
             title: const Text('Clear search history'),
@@ -182,7 +181,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             subtitle: const Text('Offline news saved on this phone'),
             onTap: _clearCache,
           ),
-          const SectionTitle(text: 'About'),
+          const _GroupLabel('About'),
           FutureBuilder<PackageInfo>(
             future: _packageInfo,
             builder: (context, snapshot) {
@@ -310,6 +309,30 @@ class _LinkTile extends StatelessWidget {
       subtitle: Text(subtitle),
       trailing: const Icon(Icons.open_in_new, size: 18),
       onTap: onTap,
+    );
+  }
+}
+/// A small grey label above each settings group, like "APPEARANCE".
+class _GroupLabel extends StatelessWidget {
+  final String text;
+
+  const _GroupLabel(this.text);
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 24, 16, 4),
+      child: Text(
+        text.toUpperCase(),
+        style: theme.textTheme.bodySmall?.copyWith(
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.8,
+          color: theme.colorScheme.onSurfaceVariant,
+        ),
+      ),
     );
   }
 }
