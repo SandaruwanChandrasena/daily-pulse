@@ -191,7 +191,7 @@ class _ArticleBody extends StatelessWidget {
     final firstLetter = source.isEmpty ? '?' : source[0].toUpperCase();
 
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -203,10 +203,10 @@ class _ArticleBody extends StatelessWidget {
             article.title,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.w800,
-              height: 1.25,
+              height: 1.3,
             ),
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 18),
           Row(
             children: [
               CircleAvatar(
@@ -245,15 +245,18 @@ class _ArticleBody extends StatelessWidget {
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           Text(
             article.description.isEmpty
                 ? 'No description available. '
                       'Tap the button below to read the full article.'
                 : article.description,
-            style: theme.textTheme.bodyLarge?.copyWith(height: 1.6),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              fontSize: 17,
+              height: 1.75,
+            ),
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 24),
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(

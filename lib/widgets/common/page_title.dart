@@ -10,7 +10,7 @@ class PageTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
         fontSize: 26,
         fontWeight: FontWeight.w800,
         letterSpacing: -0.5,

@@ -20,7 +20,7 @@ class NewsListTile extends StatelessWidget {
     return InkWell(
       onTap: onTap,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 4, 10),
+        padding: const EdgeInsets.fromLTRB(16, 14, 4, 14),
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -46,11 +46,12 @@ class NewsListTile extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: theme.textTheme.titleSmall?.copyWith(
+                      fontSize: 15,
                       fontWeight: FontWeight.w500,
-                      height: 1.3,
+                      height: 1.4,
                     ),
                   ),
-                  const SizedBox(height: 6),
+                  const SizedBox(height: 8),
                   SourceAndTime(
                     article: article,
                     style: theme.textTheme.bodySmall?.copyWith(

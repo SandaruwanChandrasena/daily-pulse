@@ -8,11 +8,13 @@ class AppLogo extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final style = TextStyle(
+    final theme = Theme.of(context);
+    final colors = theme.colorScheme;
+    final style = theme.textTheme.headlineSmall!.copyWith(
       fontSize: fontSize,
       fontWeight: FontWeight.w800,
       letterSpacing: -0.5,
+      height: 1.2,
     );
 
     return Text.rich(

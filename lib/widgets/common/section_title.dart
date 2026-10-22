@@ -19,13 +19,14 @@ class SectionTitle extends StatelessWidget {
     final hasAction = actionLabel != null;
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(16, 20, hasAction ? 4 : 16, 4),
+      padding: EdgeInsets.fromLTRB(16, 28, hasAction ? 4 : 16, 6),
       child: Row(
         children: [
           Expanded(
             child: Text(
               text,
-              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+              style: Theme.of(context).textTheme.titleLarge?.copyWith(
+                fontSize: 20,
                 fontWeight: FontWeight.w800,
               ),
             ),
