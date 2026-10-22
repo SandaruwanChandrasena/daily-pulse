@@ -1,7 +1,5 @@
 # 📰 Daily Pulse
 
-**Your daily news, in brief.**
-
 A clean news app for Android, built with **Flutter**, **Provider** and **NewsAPI.org**.
 Browse top headlines by category, search the news, save stories for later, and read them in light or dark mode — even offline.
 
