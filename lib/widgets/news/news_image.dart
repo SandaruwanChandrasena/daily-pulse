@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-import '../utils/source_style.dart';
+import '../../utils/source_style.dart';
 
 /// News image with a loading box. If there is no image (or it fails),
 /// it shows a colored box with the short source name, like "WSJ".

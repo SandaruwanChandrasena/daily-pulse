@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 
-import '../models/article.dart';
+import '../../models/article.dart';
 import 'category_badge.dart';
 import 'news_image.dart';
 import 'source_and_time.dart';

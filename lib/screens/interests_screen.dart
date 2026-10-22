@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import '../providers/onboarding_provider.dart';
-import '../widgets/interest_picker.dart';
+import '../widgets/category/interest_picker.dart';
 
 /// Settings → "My news interests": change the picks and save them.
 class InterestsScreen extends StatefulWidget {

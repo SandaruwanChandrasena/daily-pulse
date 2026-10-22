@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/article.dart';
+import '../../models/article.dart';
 import 'bookmark_button.dart';
 import 'news_image.dart';
 import 'source_and_time.dart';

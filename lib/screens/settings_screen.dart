@@ -10,9 +10,9 @@ import '../providers/onboarding_provider.dart';
 import '../providers/search_provider.dart';
 import '../providers/theme_provider.dart';
 import '../utils/confirm_dialog.dart';
-import '../widgets/app_logo.dart';
-import '../widgets/page_title.dart';
-import '../widgets/section_title.dart';
+import '../widgets/common/app_logo.dart';
+import '../widgets/common/page_title.dart';
+import '../widgets/common/section_title.dart';
 import 'interests_screen.dart';
 
 /// Settings tab: app card, theme choice, clear data and about.

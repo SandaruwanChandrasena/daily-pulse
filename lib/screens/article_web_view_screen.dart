@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:webview_flutter/webview_flutter.dart';
 
-import '../widgets/error_view.dart';
+import '../widgets/common/error_view.dart';
 
 /// Shows the full news article inside the app with a WebView.
 class ArticleWebViewScreen extends StatefulWidget {

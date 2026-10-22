@@ -7,15 +7,15 @@ import '../providers/news_provider.dart';
 import '../providers/onboarding_provider.dart';
 import '../services/news_api_service.dart';
 import '../utils/date_helper.dart';
-import '../widgets/app_logo.dart';
-import '../widgets/category_tabs.dart';
-import '../widgets/empty_view.dart';
-import '../widgets/error_view.dart';
-import '../widgets/featured_carousel.dart';
-import '../widgets/info_bar.dart';
-import '../widgets/load_more_footer.dart';
-import '../widgets/news_list_tile.dart';
-import '../widgets/section_title.dart';
+import '../widgets/common/app_logo.dart';
+import '../widgets/category/category_tabs.dart';
+import '../widgets/common/empty_view.dart';
+import '../widgets/common/error_view.dart';
+import '../widgets/news/featured_carousel.dart';
+import '../widgets/common/info_bar.dart';
+import '../widgets/common/load_more_footer.dart';
+import '../widgets/news/news_list_tile.dart';
+import '../widgets/common/section_title.dart';
 import 'news_details_screen.dart';
 
 /// Home tab: category tabs, a big top-stories slider, then the latest news.

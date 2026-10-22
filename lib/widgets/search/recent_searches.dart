@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'section_title.dart';
+import '../common/section_title.dart';
 
 /// Recent search words. Tap to search again. Swipe a row to remove it.
 class RecentSearches extends StatelessWidget {

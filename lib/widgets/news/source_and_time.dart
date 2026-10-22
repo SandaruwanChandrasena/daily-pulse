@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../models/article.dart';
-import '../utils/date_helper.dart';
+import '../../models/article.dart';
+import '../../utils/date_helper.dart';
 
 /// "Source • time ago" on one line. A long source name is cut ("…"),
 /// but the time is always shown in full.

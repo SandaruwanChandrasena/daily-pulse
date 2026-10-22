@@ -7,16 +7,16 @@ import '../providers/bookmark_provider.dart';
 import '../providers/news_provider.dart';
 import '../providers/search_provider.dart';
 import '../utils/search_suggestions.dart';
-import '../widgets/empty_view.dart';
-import '../widgets/error_view.dart';
-import '../widgets/load_more_footer.dart';
-import '../widgets/news_list_tile.dart';
-import '../widgets/page_title.dart';
-import '../widgets/recent_searches.dart';
-import '../widgets/search_field.dart';
-import '../widgets/section_title.dart';
-import '../widgets/suggestion_tile.dart';
-import '../widgets/topic_chips.dart';
+import '../widgets/common/empty_view.dart';
+import '../widgets/common/error_view.dart';
+import '../widgets/common/load_more_footer.dart';
+import '../widgets/news/news_list_tile.dart';
+import '../widgets/common/page_title.dart';
+import '../widgets/search/recent_searches.dart';
+import '../widgets/search/search_field.dart';
+import '../widgets/common/section_title.dart';
+import '../widgets/search/suggestion_tile.dart';
+import '../widgets/search/topic_chips.dart';
 import 'news_details_screen.dart';
 
 /// Search tab: big title, rounded search box, then ideas or results below.

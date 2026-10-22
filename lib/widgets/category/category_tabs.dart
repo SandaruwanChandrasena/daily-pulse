@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/news_category.dart';
+import '../../models/news_category.dart';
 
 /// A row of category names that scrolls left and right.
 /// The selected one is red with a red line under it.

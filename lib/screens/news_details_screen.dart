@@ -3,11 +3,11 @@ import 'package:share_plus/share_plus.dart';
 
 import '../models/article.dart';
 import '../utils/date_helper.dart';
-import '../widgets/bookmark_button.dart';
-import '../widgets/category_badge.dart';
-import '../widgets/news_image.dart';
-import '../widgets/news_list_tile.dart';
-import '../widgets/section_title.dart';
+import '../widgets/news/bookmark_button.dart';
+import '../widgets/news/category_badge.dart';
+import '../widgets/news/news_image.dart';
+import '../widgets/news/news_list_tile.dart';
+import '../widgets/common/section_title.dart';
 import 'article_web_view_screen.dart';
 
 /// One news story: big image header, title, source, text and related news.

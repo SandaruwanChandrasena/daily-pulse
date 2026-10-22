@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../models/article.dart';
-import '../providers/bookmark_provider.dart';
+import '../../models/article.dart';
+import '../../providers/bookmark_provider.dart';
 
 /// The 🔖 button. Red and filled when the article is saved.
 /// Tap to save or remove. Shows a short message (with Undo after removing).

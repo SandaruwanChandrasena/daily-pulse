@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/news_category.dart';
+import '../../models/news_category.dart';
 
 /// One white category box: a colored icon with the name under it.
 class CategoryCard extends StatelessWidget {

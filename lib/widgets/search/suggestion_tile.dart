@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import '../config/app_theme.dart';
-import '../models/suggestion.dart';
+import '../../config/app_theme.dart';
+import '../../models/suggestion.dart';
 
 /// One suggestion row. The part you typed is bold.
 /// The "guessed" rest of the word has a blue background.

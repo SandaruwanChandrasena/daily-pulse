@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../providers/bookmark_provider.dart';
 import '../utils/confirm_dialog.dart';
-import '../widgets/empty_view.dart';
-import '../widgets/news_list_tile.dart';
-import '../widgets/page_title.dart';
+import '../widgets/common/empty_view.dart';
+import '../widgets/news/news_list_tile.dart';
+import '../widgets/common/page_title.dart';
 import 'news_details_screen.dart';
 
 /// Saved tab: the bookmarked news, newest first. Works offline.

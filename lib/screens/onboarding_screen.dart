@@ -4,8 +4,8 @@ import 'package:provider/provider.dart';
 import '../models/news_category.dart';
 import '../providers/navigation_provider.dart';
 import '../providers/onboarding_provider.dart';
-import '../widgets/app_logo.dart';
-import '../widgets/interest_picker.dart';
+import '../widgets/common/app_logo.dart';
+import '../widgets/category/interest_picker.dart';
 
 /// First-time screens: 1. Welcome, 2. Choose your interests.
 /// Shown once. "Skip" or "Continue" opens the app.

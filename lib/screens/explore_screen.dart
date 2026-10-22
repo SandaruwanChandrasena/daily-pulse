@@ -7,12 +7,12 @@ import '../models/news_category.dart';
 import '../providers/navigation_provider.dart';
 import '../providers/news_provider.dart';
 import '../providers/search_provider.dart';
-import '../widgets/category_card.dart';
-import '../widgets/category_chips.dart';
-import '../widgets/news_list_tile.dart';
-import '../widgets/page_title.dart';
-import '../widgets/section_title.dart';
-import '../widgets/topic_chips.dart';
+import '../widgets/category/category_card.dart';
+import '../widgets/category/category_chips.dart';
+import '../widgets/news/news_list_tile.dart';
+import '../widgets/common/page_title.dart';
+import '../widgets/common/section_title.dart';
+import '../widgets/search/topic_chips.dart';
 import 'news_details_screen.dart';
 
 /// Explore tab: filter chips, all categories, popular topics and top stories.

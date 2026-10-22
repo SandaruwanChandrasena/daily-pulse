@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/news_category.dart';
+import '../../models/news_category.dart';
 
 /// A 2-column grid of categories to pick. Picked ones are light red
 /// with a red check. Used on the welcome screens and in Settings.

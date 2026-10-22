@@ -10,7 +10,7 @@ import 'providers/search_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/main_shell.dart';
 import 'screens/onboarding_screen.dart';
-import 'widgets/app_logo.dart';
+import 'widgets/common/app_logo.dart';
 
 void main() {
   runApp(

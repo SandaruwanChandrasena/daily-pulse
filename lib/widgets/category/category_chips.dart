@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../models/news_category.dart';
+import '../../models/news_category.dart';
 
 /// A sideways row of round category chips. The selected chip is red.
 /// [firstLabel] can rename the first chip (for example "All").
