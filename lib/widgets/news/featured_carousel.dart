@@ -185,8 +185,8 @@ class _FeaturedCard extends StatelessWidget {
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
                     style: Theme.of(context).textTheme.titleMedium?.copyWith(
-                      color: Colors.white,
-                      fontSize: 15,
+                      color: Colors.white.withValues(alpha: 0.88),
+                      fontSize: 14,
                       fontWeight: FontWeight.w600,
                       height: 1.3,
                       shadows: const [
@@ -197,7 +197,10 @@ class _FeaturedCard extends StatelessWidget {
                   const SizedBox(height: 4),
                   SourceAndTime(
                     article: article,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.6),
+                      fontSize: 11,
+                    ),
                   ),
                 ],
               ),

@@ -84,7 +84,7 @@ class _CategoryTabsState extends State<CategoryTabs> {
               category.label,
               style: TextStyle(
                 fontSize: 13,
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
+                fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: isSelected ? colors.primary : colors.onSurfaceVariant,
               ),
             ),
