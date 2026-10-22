@@ -48,8 +48,8 @@ Browse top headlines by category, search the news, save stories for later, and r
 
 | Feature | What it does |
 |---|---|
-| 🏠 **Home** | Auto-sliding banner (top 5 stories) + Latest News list with image, title, source and time |
-| 📰 **News details** | Big image, title, source, date, description, **Read full article** (in-app WebView or browser) |
+| 🏠 **Home** | Auto-sliding banner with latest News list with image, title, source and time |
+| 📰 **News details** | Big image, title, source, date, description, **Read full article** in-app WebView or browser |
 | 🗂️ **Categories** | General, Business, Technology, Sports, Health, Science, Entertainment + **Sri Lanka** |
 | 🔍 **Search** | Search any topic, with recent searches and trending topics |
 | 🔖 **Bookmarks** | Save stories. They stay after the app closes. Undo and Clear all |
@@ -62,7 +62,7 @@ Browse top headlines by category, search the news, save stories for later, and r
 |---|---|
 | 🌙 **Dark mode** | Light / Dark / System. Your choice is saved |
 | 📤 **Share** | Share a story's link to any app |
-| 📜 **Pagination** | More news loads as you scroll (Home and Search) |
+| 📜 **Pagination** | More news loads as you scroll |
 | 🧪 **Unit tests** | 46 tests for the model, the API service and helpers |
 
 ### Extras
