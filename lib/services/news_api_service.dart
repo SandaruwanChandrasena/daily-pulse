@@ -6,6 +6,7 @@ import 'package:http/http.dart' as http;
 
 import '../config/api_keys.dart';
 import '../models/article.dart';
+import '../models/news_page.dart';
 
 /// A simple error with a message we can show to the user.
 class NewsApiException implements Exception {
@@ -23,6 +24,10 @@ class NewsApiService {
   static const String _baseUrl = 'https://newsapi.org/v2';
   static const String _country = 'us';
   static const Duration _timeout = Duration(seconds: 15);
+
+  /// News per page. 4 pages × 25 = 100, the free plan's maximum results.
+  static const int pageSize = 25;
+  static const int maxResults = 100;
   static const String _noInternetMessage =
       'No internet connection. Please check your network and try again.';
 
@@ -31,14 +36,21 @@ class NewsApiService {
   /// We can pass a fake client in tests. In the app we use a real one.
   NewsApiService({http.Client? client}) : _client = client ?? http.Client();
 
+  /// True if there is another page after [page] for this list.
+  static bool hasMorePages({required int page, required int totalResults}) {
+    final limit = totalResults < maxResults ? totalResults : maxResults;
+    return page * pageSize < limit;
+  }
+
   /// Gets the top news. [category] is optional (like 'sports').
-  Future<List<Article>> fetchTopHeadlines({String? category}) async {
+  Future<NewsPage> fetchTopHeadlines({String? category, int page = 1}) async {
     final uri = Uri.parse('$_baseUrl/top-headlines').replace(
       queryParameters: {
         'country': _country,
         // "?category" adds this entry only when category is not null.
         'category': ?category,
-        'pageSize': '30',
+        'pageSize': '$pageSize',
+        'page': '$page',
       },
     );
 
@@ -47,22 +59,27 @@ class NewsApiService {
 
   /// Searches all news for a keyword (newest first).
   /// [searchIn] is optional, like 'title' to only match words in the title.
-  Future<List<Article>> searchNews(String query, {String? searchIn}) async {
+  Future<NewsPage> searchNews(
+    String query, {
+    String? searchIn,
+    int page = 1,
+  }) async {
     final uri = Uri.parse('$_baseUrl/everything').replace(
       queryParameters: {
         'q': query,
         'searchIn': ?searchIn,
         'language': 'en',
         'sortBy': 'publishedAt',
-        'pageSize': '30',
+        'pageSize': '$pageSize',
+        'page': '$page',
       },
     );
 
     return _getArticles(uri);
   }
 
-  /// Sends the request and turns the JSON into a list of Articles.
-  Future<List<Article>> _getArticles(Uri uri) async {
+  /// Sends the request and turns the JSON into a page of Articles.
+  Future<NewsPage> _getArticles(Uri uri) async {
     final http.Response response;
 
     try {
@@ -96,11 +113,16 @@ class NewsApiService {
 
     final items = body['articles'] as List<dynamic>? ?? [];
 
-    return items
+    final articles = items
         .map((item) => Article.fromJson(item as Map<String, dynamic>))
         // NewsAPI sends "[Removed]" for deleted news. We hide those.
         .where((article) => article.title != '[Removed]')
         .toList();
+
+    return NewsPage(
+      articles: articles,
+      totalResults: body['totalResults'] as int? ?? articles.length,
+    );
   }
 
   /// Turns an API error into a friendly message.

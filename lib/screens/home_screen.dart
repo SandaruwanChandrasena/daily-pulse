@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../models/news_category.dart';
 import '../providers/news_provider.dart';
+import '../services/news_api_service.dart';
 import '../utils/date_helper.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/category_tabs.dart';
@@ -11,11 +12,13 @@ import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
 import '../widgets/featured_carousel.dart';
 import '../widgets/info_bar.dart';
+import '../widgets/load_more_footer.dart';
 import '../widgets/news_list_tile.dart';
 import '../widgets/section_title.dart';
 import 'news_details_screen.dart';
 
 /// Home tab: category tabs, a big top-stories slider, then the latest news.
+/// More news loads by itself when the user scrolls near the bottom.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -72,52 +75,78 @@ class HomeScreen extends StatelessWidget {
         .where((article) => article.imageUrl.isNotEmpty)
         .take(_featuredCount)
         .toList();
-    final rest = news.articles.where((article) => !featured.contains(article));
-    final latest = [
-      ...rest.where((article) => article.imageUrl.isNotEmpty),
-      ...rest.where((article) => article.imageUrl.isEmpty),
-    ];
+    final rest = news.articles
+        .where((article) => !featured.contains(article))
+        .toList();
+    final latest = _imagesFirstPerPage(rest);
 
     return RefreshIndicator(
       onRefresh: news.refresh,
-      child: CustomScrollView(
-        key: PageStorageKey(category.id),
-        slivers: [
-          if (news.errorMessage != null)
-            SliverToBoxAdapter(child: _savedNewsBar(context, news)),
-          if (category.note != null)
-            SliverToBoxAdapter(child: _noteBar(context, category.note!)),
-          if (featured.isNotEmpty)
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 12),
-                child: FeaturedCarousel(
-                  key: ValueKey(category.id),
-                  articles: featured,
-                  badgeText: category.label,
-                  onTap: openDetails,
+      child: NotificationListener<ScrollNotification>(
+        onNotification: (notification) {
+          if (LoadMoreFooter.isNearEnd(notification)) news.loadMore();
+          return false;
+        },
+        child: CustomScrollView(
+          key: PageStorageKey(category.id),
+          slivers: [
+            if (news.errorMessage != null)
+              SliverToBoxAdapter(child: _savedNewsBar(context, news)),
+            if (category.note != null)
+              SliverToBoxAdapter(child: _noteBar(context, category.note!)),
+            if (featured.isNotEmpty)
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 12),
+                  child: FeaturedCarousel(
+                    key: ValueKey(category.id),
+                    articles: featured,
+                    badgeText: category.label,
+                    onTap: openDetails,
+                  ),
                 ),
               ),
-            ),
-          if (latest.isNotEmpty) ...[
-            const SliverToBoxAdapter(
-              child: SectionTitle(text: 'Latest News'),
-            ),
-            SliverList.builder(
-              itemCount: latest.length,
-              itemBuilder: (context, index) {
-                final article = latest[index];
-                return NewsListTile(
-                  article: article,
-                  onTap: () => openDetails(article),
-                );
-              },
+            if (latest.isNotEmpty) ...[
+              const SliverToBoxAdapter(
+                child: SectionTitle(text: 'Latest News'),
+              ),
+              SliverList.builder(
+                itemCount: latest.length,
+                itemBuilder: (context, index) {
+                  final article = latest[index];
+                  return NewsListTile(
+                    article: article,
+                    onTap: () => openDetails(article),
+                  );
+                },
+              ),
+            ],
+            SliverToBoxAdapter(
+              child: LoadMoreFooter(
+                isLoadingMore: news.isLoadingMore,
+                hasMore: news.hasMore,
+                error: news.loadMoreError,
+                onRetry: news.loadMore,
+              ),
             ),
           ],
-          const SliverToBoxAdapter(child: SizedBox(height: 16)),
-        ],
+        ),
       ),
     );
+  }
+
+  /// In each page, news with images comes first and no-image news last.
+  /// We sort page by page, so loading a new page never moves older rows.
+  List<Article> _imagesFirstPerPage(List<Article> articles) {
+    const pageSize = NewsApiService.pageSize;
+    final result = <Article>[];
+    for (var start = 0; start < articles.length; start += pageSize) {
+      final page = articles.skip(start).take(pageSize);
+      result
+        ..addAll(page.where((article) => article.imageUrl.isNotEmpty))
+        ..addAll(page.where((article) => article.imageUrl.isEmpty));
+    }
+    return result;
   }
 
   /// Shown when we could not get fresh news, so we show saved news.

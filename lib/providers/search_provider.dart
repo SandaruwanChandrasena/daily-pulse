@@ -5,6 +5,7 @@ import '../services/news_api_service.dart';
 import '../services/search_history_service.dart';
 
 /// Holds the search results and the recent searches for the Search screen.
+/// [loadMore] adds the next page of results.
 class SearchProvider extends ChangeNotifier {
   static const int _maxHistory = 10;
 
@@ -22,6 +23,10 @@ class SearchProvider extends ChangeNotifier {
   String? _errorMessage;
   String _query = '';
   List<String> _history = [];
+  int _page = 1;
+  bool _hasMore = false;
+  bool _isLoadingMore = false;
+  String? _loadMoreError;
 
   List<Article> get articles => _articles;
   bool get isLoading => _isLoading;
@@ -29,6 +34,9 @@ class SearchProvider extends ChangeNotifier {
   String get query => _query;
   bool get hasSearched => _query.isNotEmpty;
   List<String> get history => _history;
+  bool get hasMore => _hasMore;
+  bool get isLoadingMore => _isLoadingMore;
+  String? get loadMoreError => _loadMoreError;
 
   /// Reads the saved recent searches from the phone (called once at start).
   Future<void> loadHistory() async {
@@ -55,12 +63,20 @@ class SearchProvider extends ChangeNotifier {
     _articles = [];
     _isLoading = true;
     _errorMessage = null;
+    _page = 1;
+    _hasMore = false;
+    _isLoadingMore = false;
+    _loadMoreError = null;
     notifyListeners();
 
     try {
-      final results = await _apiService.searchNews(query);
+      final result = await _apiService.searchNews(query);
       if (query != _query) return;
-      _articles = results;
+      _articles = result.articles;
+      _hasMore = NewsApiService.hasMorePages(
+        page: 1,
+        totalResults: result.totalResults,
+      );
     } on NewsApiException catch (e) {
       if (query != _query) return;
       _errorMessage = e.message;
@@ -71,6 +87,44 @@ class SearchProvider extends ChangeNotifier {
     }
 
     _isLoading = false;
+    notifyListeners();
+  }
+
+  /// Adds the next page of results (no duplicates).
+  Future<void> loadMore() async {
+    if (_isLoading || _isLoadingMore || !_hasMore || _query.isEmpty) return;
+
+    final query = _query;
+    final nextPage = _page + 1;
+    _isLoadingMore = true;
+    _loadMoreError = null;
+    notifyListeners();
+
+    try {
+      final result = await _apiService.searchNews(query, page: nextPage);
+      if (query != _query) return;
+      final knownUrls = _articles.map((article) => article.url).toSet();
+      final newArticles = result.articles
+          .where((article) => knownUrls.add(article.url))
+          .toList();
+      _articles = [..._articles, ...newArticles];
+      _page = nextPage;
+      _hasMore =
+          newArticles.isNotEmpty &&
+          NewsApiService.hasMorePages(
+            page: nextPage,
+            totalResults: result.totalResults,
+          );
+    } on NewsApiException catch (e) {
+      if (query != _query) return;
+      _loadMoreError = e.message;
+    } catch (e) {
+      if (query != _query) return;
+      _loadMoreError = 'Could not load more results.';
+      debugPrint('search loadMore error: $e');
+    }
+
+    _isLoadingMore = false;
     notifyListeners();
   }
 
@@ -87,6 +141,10 @@ class SearchProvider extends ChangeNotifier {
     _articles = [];
     _isLoading = false;
     _errorMessage = null;
+    _page = 1;
+    _hasMore = false;
+    _isLoadingMore = false;
+    _loadMoreError = null;
     notifyListeners();
   }
 

@@ -9,6 +9,7 @@ import '../providers/search_provider.dart';
 import '../utils/search_suggestions.dart';
 import '../widgets/empty_view.dart';
 import '../widgets/error_view.dart';
+import '../widgets/load_more_footer.dart';
 import '../widgets/news_list_tile.dart';
 import '../widgets/page_title.dart';
 import '../widgets/recent_searches.dart';
@@ -235,27 +236,41 @@ class _SearchScreenState extends State<SearchScreen> {
     );
   }
 
+  /// Title row, the results, then the load-more footer at the end.
   Widget _buildResults(SearchProvider search) {
     final articles = search.articles;
 
-    return ListView.builder(
-      keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-      padding: const EdgeInsets.only(bottom: 16),
-      itemCount: articles.length + 1,
-      itemBuilder: (context, index) {
-        if (index == 0) {
-          return SectionTitle(
-            text: 'Search Results (${articles.length})',
-            actionLabel: 'Clear',
-            onAction: _clear,
-          );
-        }
-        final article = articles[index - 1];
-        return NewsListTile(
-          article: article,
-          onTap: () => _openDetails(article),
-        );
+    return NotificationListener<ScrollNotification>(
+      onNotification: (notification) {
+        if (LoadMoreFooter.isNearEnd(notification)) search.loadMore();
+        return false;
       },
+      child: ListView.builder(
+        keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+        itemCount: articles.length + 2,
+        itemBuilder: (context, index) {
+          if (index == 0) {
+            return SectionTitle(
+              text: 'Search Results (${articles.length})',
+              actionLabel: 'Clear',
+              onAction: _clear,
+            );
+          }
+          if (index == articles.length + 1) {
+            return LoadMoreFooter(
+              isLoadingMore: search.isLoadingMore,
+              hasMore: search.hasMore,
+              error: search.loadMoreError,
+              onRetry: search.loadMore,
+            );
+          }
+          final article = articles[index - 1];
+          return NewsListTile(
+            article: article,
+            onTap: () => _openDetails(article),
+          );
+        },
+      ),
     );
   }
 }

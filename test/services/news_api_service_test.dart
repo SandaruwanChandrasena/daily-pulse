@@ -6,10 +6,10 @@ import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
 
 /// Builds a fake NewsAPI answer with these article titles.
-String _okBody(List<String> titles) {
+String _okBody(List<String> titles, {int? totalResults}) {
   return jsonEncode({
     'status': 'ok',
-    'totalResults': titles.length,
+    'totalResults': totalResults ?? titles.length,
     'articles': [
       for (final title in titles)
         {
@@ -42,10 +42,11 @@ void main() {
         (request) async => http.Response(_okBody(['One', 'Two']), 200),
       );
 
-      final articles = await service.fetchTopHeadlines();
+      final page = await service.fetchTopHeadlines();
 
-      expect(articles.length, 2);
-      expect(articles.first.title, 'One');
+      expect(page.articles.length, 2);
+      expect(page.articles.first.title, 'One');
+      expect(page.totalResults, 2);
     });
 
     test('hides "[Removed]" articles', () async {
@@ -54,9 +55,9 @@ void main() {
             http.Response(_okBody(['One', '[Removed]', 'Two']), 200),
       );
 
-      final articles = await service.fetchTopHeadlines();
+      final page = await service.fetchTopHeadlines();
 
-      expect(articles.map((a) => a.title), ['One', 'Two']);
+      expect(page.articles.map((a) => a.title), ['One', 'Two']);
     });
 
     test('sends the right URL and the API key header', () async {
@@ -71,7 +72,22 @@ void main() {
       expect(sent.url.path, '/v2/top-headlines');
       expect(sent.url.queryParameters['category'], 'sports');
       expect(sent.url.queryParameters['country'], 'us');
+      expect(sent.url.queryParameters['page'], '1');
+      expect(sent.url.queryParameters['pageSize'], '25');
       expect(sent.headers['X-Api-Key'], isNotNull);
+    });
+
+    test('sends the page number for the next page', () async {
+      late http.Request sent;
+      final service = _serviceWith((request) async {
+        sent = request;
+        return http.Response(_okBody(['Three'], totalResults: 60), 200);
+      });
+
+      final page = await service.fetchTopHeadlines(page: 2);
+
+      expect(sent.url.queryParameters['page'], '2');
+      expect(page.totalResults, 60);
     });
 
     test('does not send a category when none is given', () async {
@@ -95,12 +111,34 @@ void main() {
         return http.Response(_okBody(['Cricket news']), 200);
       });
 
-      final articles = await service.searchNews('cricket', searchIn: 'title');
+      final page = await service.searchNews(
+        'cricket',
+        searchIn: 'title',
+        page: 3,
+      );
 
       expect(sent.url.path, '/v2/everything');
       expect(sent.url.queryParameters['q'], 'cricket');
       expect(sent.url.queryParameters['searchIn'], 'title');
-      expect(articles.single.title, 'Cricket news');
+      expect(sent.url.queryParameters['page'], '3');
+      expect(page.articles.single.title, 'Cricket news');
+    });
+  });
+
+  group('hasMorePages', () {
+    test('true while there are more results', () {
+      expect(NewsApiService.hasMorePages(page: 1, totalResults: 60), isTrue);
+      expect(NewsApiService.hasMorePages(page: 2, totalResults: 60), isTrue);
+    });
+
+    test('false when all results are loaded', () {
+      expect(NewsApiService.hasMorePages(page: 3, totalResults: 60), isFalse);
+      expect(NewsApiService.hasMorePages(page: 1, totalResults: 10), isFalse);
+    });
+
+    test('stops at the free plan limit of 100 results', () {
+      expect(NewsApiService.hasMorePages(page: 3, totalResults: 500), isTrue);
+      expect(NewsApiService.hasMorePages(page: 4, totalResults: 500), isFalse);
     });
   });
 
