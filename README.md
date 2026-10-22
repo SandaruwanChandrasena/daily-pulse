@@ -10,18 +10,12 @@ Browse top headlines by category, search the news, save stories for later, and r
 ![Tests](https://img.shields.io/badge/Unit%20tests-46%20passing-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
-> Built in one week as a **practice brief** for a Flutter intern role (a mock assignment I set for myself to learn Flutter fast).
+## 🎥 Demo Video
 
----
-
-## 📥 Download & Demo
-
-| | |
+| Video | Link |
 |---|---|
-| 📱 **Release APK** | _Coming soon_ (GitHub Releases) |
-| 🎥 **Demo video** | _Coming soon_ (YouTube) |
+| Daily Pulse demo video | https://youtube.com/shorts/hoN08wMltRg |
 
----
 
 ## 📸 Screenshots
 
@@ -47,8 +41,6 @@ Browse top headlines by category, search the news, save stories for later, and r
     <td></td>
   </tr>
 </table>
-
----
 
 ## ✨ Features
 
@@ -84,7 +76,6 @@ Browse top headlines by category, search the news, save stories for later, and r
 - ⚡ **API saver** — each category is cached for 15 minutes, so switching tabs does not waste API requests.
 - ⚙️ **Settings** — change interests, show the welcome screens again, clear search history, clear cached news, app version and links.
 
----
 
 ## 🚀 Setup
 
@@ -132,7 +123,6 @@ The APK is at `build/app/outputs/flutter-apk/app-release.apk`.
 
 > ⚠️ Please run the app on **Android**. NewsAPI's free plan blocks requests from a web browser.
 
----
 
 ## 📦 Packages Used
 
@@ -150,8 +140,6 @@ The APK is at `build/app/outputs/flutter-apk/app-release.apk`.
 | [`flutter_launcher_icons`](https://pub.dev/packages/flutter_launcher_icons) | Makes the app icon (dev only) |
 
 > `shared_preferences_android` is pinned below `2.5.0`. Version 2.5.x had a bug where saving did not work in **release** builds (R8 renamed some classes). See [LEARNING_LOG.md](LEARNING_LOG.md) for the full story.
-
----
 
 ## 🗂️ Project Structure
 
@@ -188,8 +176,6 @@ Screen  →  Provider  →  Service  →  NewsAPI / phone storage
    └── notifyListeners() rebuilds the screen
 ```
 
----
-
 ## 🧪 Testing
 
 ```bash
@@ -199,8 +185,6 @@ flutter test
 - 46 unit tests: article model, categories, API service (with a fake server), dates, search suggestions and source styles.
 - The tests use **no internet** and **no API requests**.
 - The full **manual test plan** (release mode, on a real phone) is in [TESTING.md](TESTING.md).
-
----
 
 ## ℹ️ Good to Know (NewsAPI free plan)
 
@@ -219,21 +203,16 @@ flutter test
 - Fonts download on the **first launch** (needs internet once), then they are cached.
 - Tested on a real Android phone (Realme RMX2195).
 
----
-
 ## 📝 What I Learned
 
 All the problems I hit and how I fixed them are in **[LEARNING_LOG.md](LEARNING_LOG.md)**.
 
----
 
 ## 🙏 Credits
 
 - News data by [NewsAPI.org](https://newsapi.org)
 - Fonts: [Archivo](https://fonts.google.com/specimen/Archivo) and [Inter](https://fonts.google.com/specimen/Inter) from Google Fonts
 - Icons: Material Icons
-
----
 
 ## 👤 Author
 
@@ -242,8 +221,6 @@ All the problems I hit and how I fixed them are in **[LEARNING_LOG.md](LEARNING_
 - 🐙 GitHub: [@SandaruwanChandrasena](https://github.com/SandaruwanChandrasena)
 - 🎥 YouTube: [@SandaruwanChandrasena-98](https://www.youtube.com/@SandaruwanChandrasena-98)
 - 💼 LinkedIn: [sandaruwanchandrasena](https://www.linkedin.com/in/sandaruwanchandrasena)
-
----
 
 ## 📄 License
 
