@@ -6,12 +6,14 @@ import 'package:url_launcher/url_launcher.dart';
 import '../config/app_info.dart';
 import '../config/app_theme.dart';
 import '../providers/news_provider.dart';
+import '../providers/onboarding_provider.dart';
 import '../providers/search_provider.dart';
 import '../providers/theme_provider.dart';
 import '../utils/confirm_dialog.dart';
 import '../widgets/app_logo.dart';
 import '../widgets/page_title.dart';
 import '../widgets/section_title.dart';
+import 'interests_screen.dart';
 
 /// Settings tab: app card, theme choice, clear data and about.
 class SettingsScreen extends StatefulWidget {
@@ -103,6 +105,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     final historyCount = context.select<SearchProvider, int>(
       (search) => search.history.length,
     );
+    final interestCount = context.select<OnboardingProvider, int>(
+      (onboarding) => onboarding.interests.length,
+    );
 
     return Scaffold(
       appBar: AppBar(title: const PageTitle('Settings'), centerTitle: false),
@@ -137,6 +142,27 @@ class _SettingsScreenState extends State<SettingsScreen> {
               onSelectionChanged: (selection) =>
                   context.read<ThemeProvider>().setThemeMode(selection.first),
             ),
+          ),
+          const SectionTitle(text: 'Personalize'),
+          ListTile(
+            leading: const Icon(Icons.tune),
+            title: const Text('My news interests'),
+            subtitle: Text(
+              interestCount == 0
+                  ? 'Pick topics to show first on Home'
+                  : '$interestCount topics picked',
+            ),
+            trailing: const Icon(Icons.chevron_right),
+            onTap: () => Navigator.push(
+              context,
+              MaterialPageRoute(builder: (_) => const InterestsScreen()),
+            ),
+          ),
+          ListTile(
+            leading: const Icon(Icons.waving_hand_outlined),
+            title: const Text('Show welcome screens again'),
+            subtitle: const Text('See the first-time screens one more time'),
+            onTap: () => context.read<OnboardingProvider>().showAgain(),
           ),
           const SectionTitle(text: 'Storage'),
           ListTile(

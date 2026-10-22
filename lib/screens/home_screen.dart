@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import '../models/article.dart';
 import '../models/news_category.dart';
 import '../providers/news_provider.dart';
+import '../providers/onboarding_provider.dart';
 import '../services/news_api_service.dart';
 import '../utils/date_helper.dart';
 import '../widgets/app_logo.dart';
@@ -19,6 +20,7 @@ import 'news_details_screen.dart';
 
 /// Home tab: category tabs, a big top-stories slider, then the latest news.
 /// More news loads by itself when the user scrolls near the bottom.
+/// The user's interests show first in the category tabs.
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
@@ -26,6 +28,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final interests = context.watch<OnboardingProvider>().interests;
+    final categories = NewsCategory.ordered(interests);
+
     return Scaffold(
       appBar: AppBar(title: const AppLogo(), centerTitle: false),
       body: Consumer<NewsProvider>(
@@ -33,7 +38,7 @@ class HomeScreen extends StatelessWidget {
           return Column(
             children: [
               CategoryTabs(
-                categories: NewsCategory.all,
+                categories: categories,
                 selectedId: news.selectedCategory,
                 onSelected: news.selectCategory,
               ),

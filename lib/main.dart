@@ -5,9 +5,12 @@ import 'config/app_theme.dart';
 import 'providers/bookmark_provider.dart';
 import 'providers/navigation_provider.dart';
 import 'providers/news_provider.dart';
+import 'providers/onboarding_provider.dart';
 import 'providers/search_provider.dart';
 import 'providers/theme_provider.dart';
 import 'screens/main_shell.dart';
+import 'screens/onboarding_screen.dart';
+import 'widgets/app_logo.dart';
 
 void main() {
   runApp(
@@ -21,6 +24,7 @@ void main() {
         ),
         ChangeNotifierProvider(create: (_) => BookmarkProvider()..load()),
         ChangeNotifierProvider(create: (_) => ThemeProvider()..load()),
+        ChangeNotifierProvider(create: (_) => OnboardingProvider()..load()),
       ],
       child: const DailyPulseApp(),
     ),
@@ -40,7 +44,22 @@ class DailyPulseApp extends StatelessWidget {
       theme: AppTheme.light(),
       darkTheme: AppTheme.dark(),
       themeMode: themeMode,
-      home: const MainShell(),
+      home: const _StartScreen(),
     );
+  }
+}
+
+/// Picks the first screen: the welcome screens (first time) or the app.
+class _StartScreen extends StatelessWidget {
+  const _StartScreen();
+
+  @override
+  Widget build(BuildContext context) {
+    final onboarding = context.watch<OnboardingProvider>();
+
+    if (!onboarding.isReady) {
+      return const Scaffold(body: Center(child: AppLogo(fontSize: 36)));
+    }
+    return onboarding.isDone ? const MainShell() : const OnboardingScreen();
   }
 }

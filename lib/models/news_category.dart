@@ -83,4 +83,17 @@ class NewsCategory {
       orElse: () => all.first,
     );
   }
+
+  /// The categories users can pick as interests (all except General).
+  static List<NewsCategory> get choosable =>
+      all.where((category) => category.id != all.first.id).toList();
+
+  /// General first, then the user's [interestIds], then the rest.
+  /// Keeps the normal order inside each group.
+  static List<NewsCategory> ordered(List<String> interestIds) {
+    final general = all.first;
+    final picked = choosable.where((c) => interestIds.contains(c.id));
+    final others = choosable.where((c) => !interestIds.contains(c.id));
+    return [general, ...picked, ...others];
+  }
 }
