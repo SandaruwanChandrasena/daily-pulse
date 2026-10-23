@@ -11,14 +11,23 @@ Browse top headlines by category, search the news, save stories for later, and r
 ![Platform](https://img.shields.io/badge/Platform-Android-3DDC84?logo=android&logoColor=white)
 ![Tests](https://img.shields.io/badge/Unit%20tests-46%20passing-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
+![Visitors](https://visitor-badge.laobi.icu/badge?page_id=SandaruwanChandrasena.daily-pulse&left_text=Visitors)
 
 </div>
 
 ## 🎥 Demo Video
 
-| Video | Link |
-|---|---|
-| Daily Pulse demo video | https://youtube.com/shorts/hoN08wMltRg |
+<div align="center">
+
+<a href="https://youtube.com/shorts/hoN08wMltRg">
+  <img src="screenshots/video_thumbnail.jpg" width="260" alt="Watch the Daily Pulse demo video">
+</a>
+
+<br><br>
+
+[![Watch on YouTube](https://img.shields.io/badge/Watch%20on-YouTube-FF0000?style=for-the-badge&logo=youtube&logoColor=white)](https://youtube.com/shorts/hoN08wMltRg)
+
+</div>
 
 ## 📸 Screenshots
 
