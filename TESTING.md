@@ -23,14 +23,119 @@ flutter test
 
 ### 📋 What is tested
 
-| Test file | What it checks |
-|---|---|
-| `test/models/article_test.dart` | `fromJson` reads NewsAPI JSON, safe defaults for null fields, removes `" - Source"` from titles, `toJson` → `fromJson` gives the same article |
-| `test/models/news_category_test.dart` | Category list and the order of tabs after picking interests |
-| `test/services/news_api_service_test.dart` | Good answer → articles, `[Removed]` news hidden, correct URL + API key header, errors: 401, 429, server message, bad JSON, no internet |
-| `test/utils/source_style_test.dart` | Short source names (`WSJ`, `BBC`, `Axios`, `PS`), same source → same color |
-| `test/utils/search_suggestions_test.dart` | Live search: order (recent → topics → title words), no duplicates, limit, match inside titles |
-| `test/utils/date_helper_test.dart` | `formatDate` and `timeAgo` ("just now", "5 min ago", "1 day ago", date after 7 days) |
+**46 tests in 6 files.** Each test gives the code a small input and checks the answer.
+
+| Test file | What it tests | Tests |
+|---|---|---|
+| `test/models/article_test.dart` | Turning NewsAPI JSON into an `Article` and back | 5 |
+| `test/models/news_category_test.dart` | Category list and tab order after picking interests | 4 |
+| `test/services/news_api_service_test.dart` | Calls to NewsAPI (with a fake server), pages and errors | 14 |
+| `test/utils/source_style_test.dart` | Short source names and colors for the no-image boxes | 7 |
+| `test/utils/search_suggestions_test.dart` | Live search suggestions and "In loaded news" matches | 10 |
+| `test/utils/date_helper_test.dart` | Dates and "time ago" text | 6 |
+| | **Total** | **46** |
+
+#### 📰 1. `article_test.dart` — Article model (5 tests)
+
+| Test | Input | Expected |
+|---|---|---|
+| Reads all fields | Full NewsAPI JSON: `"Rain in Colombo"`, BBC News, image, date | Every field is read correctly. Date = 19 Oct 2026, 06:30 UTC |
+| Safe defaults | All fields `null`, date = `"not a date"` | Title `"No title"`, source `"Unknown source"`, empty text for the rest, date = now. **No crash** |
+| Removes " - Source" from the title | `"Big news today - Axios"` from Axios | `"Big news today"` |
+| Keeps a different ending | `"Big news today - Reuters"` from Axios | Title is not changed |
+| `toJson` → `fromJson` | An article saved to JSON and read back | The copy is the same as the original (used for bookmarks and offline news) |
+
+#### 🗂️ 2. `news_category_test.dart` — Categories and tab order (4 tests)
+
+| Test | Input | Expected |
+|---|---|---|
+| Choosable list | `NewsCategory.choosable` | Every category **except General** (General can't be picked on the welcome screen) |
+| No interests | `ordered([])` | Normal tab order |
+| Picks move to the front | `ordered(['sports', 'srilanka'])` | **General → Sri Lanka → Sports** → the rest. No tab is lost |
+| Unknown ids | `ordered(['cooking', 'science'])` | `cooking` is ignored. General → Science → the rest |
+
+#### 🌐 3. `news_api_service_test.dart` — NewsAPI service (14 tests)
+
+These tests use a **fake server** (`MockClient`). It returns a fixed answer, so no real request is sent.
+
+**Top headlines**
+
+| Test | Fake server answer | Expected |
+|---|---|---|
+| Good answer | 200 with 2 articles | 2 articles, first title `"One"`, `totalResults` = 2 |
+| Hides removed news | Titles `One`, `[Removed]`, `Two` | Only `One` and `Two` |
+| Right URL and key | Ask for `sports` | Path `/v2/top-headlines`, `category=sports`, `country=us`, `page=1`, `pageSize=25`, `X-Api-Key` header is sent |
+| Next page | Ask for page 2 | `page=2` is sent, `totalResults` = 60 |
+| No category | Ask with no category | No `category` in the URL |
+
+**Search**
+
+| Test | Fake server answer | Expected |
+|---|---|---|
+| Search word | Search `cricket`, title only, page 3 | Path `/v2/everything`, `q=cricket`, `searchIn=title`, `page=3` |
+
+**Load more (`hasMorePages`)**
+
+| Test | Input | Expected |
+|---|---|---|
+| More to load | Page 1 or 2 of 60 results | `true` |
+| All loaded | Page 3 of 60 results, or page 1 of 10 | `false` |
+| Free plan limit | 500 results: page 3 → page 4 | `true` → `false` (stops at **100 results**) |
+
+**Errors**
+
+| Test | Fake server answer | Expected message |
+|---|---|---|
+| 401 | Bad API key | Message about the **API key** |
+| 429 | Too many requests | **"Too many requests"** (daily limit) |
+| Other errors | 500 with `"Server is sleeping"` | Shows NewsAPI's own message |
+| Bad JSON | 200 with HTML, not JSON | **"bad data"** message |
+| No internet | Connection fails | **"No internet"**, and `isNoInternet = true` (the app then shows offline news) |
+
+#### 🖼️ 4. `source_style_test.dart` — No-image boxes (7 tests)
+
+| Test | Input | Expected |
+|---|---|---|
+| Initials, skip small words | `The Wall Street Journal` | `WSJ` |
+| Short CAPITAL word | `BBC News` | `BBC` |
+| Single word | `Axios` | `Axios` |
+| Two-word name | `Page Six` | `PS` |
+| Unknown or empty | `Unknown source`, `""` | `""` (empty) |
+| Same color | `Reuters` twice | Same color both times |
+| Different colors | `CNN` and `Bloomberg` | Different colors |
+
+#### 💡 5. `search_suggestions_test.dart` — Live search (10 tests)
+
+**`buildSuggestions` (the list under the search box)**
+
+| Test | Input | Expected |
+|---|---|---|
+| Empty text | Only spaces | No suggestions |
+| Order | Type `cri`: recent `Cricket world cup`, topic `Cricket` | Recent first, then topic |
+| No duplicates | `Cricket`, `cricket`, `CRICKET` | Only 1 (the recent one). Upper/lower case is ignored |
+| Not the same word | Type `cricket`, topic `Cricket` | Nothing (no point suggesting what is already typed) |
+| Later word | Type `cup` | Finds `Cricket world cup` |
+| Words from titles | Type `cri`: 2 titles with "cricket", 1 with "crime" | `Cricket` first (used more), then `Crime` |
+| Limit | 8 matching topics | Only **6** suggestions |
+
+**`findInTitles` (the "In loaded news" part)**
+
+| Test | Input | Expected |
+|---|---|---|
+| At least 2 letters | Type `a` | Nothing |
+| Any case | Type `ai` | `AI helps doctors`, `Rain in Colombo`, `New AI phone` |
+| Limit | Type `ai`, limit 1 | Only 1 result |
+
+#### 🕒 6. `date_helper_test.dart` — Dates (6 tests)
+
+| Test | Input | Expected |
+|---|---|---|
+| `formatDate` | 18 Oct 2026, 5 Jan 2026 | `18 Oct 2026`, `5 Jan 2026` |
+| Just now | 20 seconds ago | `just now` |
+| Minutes | 5 minutes ago | `5 min ago` |
+| Hours | 1 hour, 3 hours ago | `1 hour ago`, `3 hours ago` |
+| Days | 1 day, 3 days ago | `1 day ago`, `3 days ago` |
+| Old news | 10 days ago | The date (like `12 Oct 2026`) |
 
 ## 📱 Manual Test Plan
 
