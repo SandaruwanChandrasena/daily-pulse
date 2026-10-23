@@ -1,6 +1,8 @@
+<div align="center">
+
 # 📰 Daily Pulse
 
-A clean news app for Android, built with **Flutter**, **Provider** and **NewsAPI.org**.
+A clean news app for Android, built with **Flutter**, **Provider** and **NewsAPI.org**.<br>
 Browse top headlines by category, search the news, save stories for later, and read them in light or dark mode — even offline.
 
 ![Flutter](https://img.shields.io/badge/Flutter-3.x-02569B?logo=flutter&logoColor=white)
@@ -10,12 +12,13 @@ Browse top headlines by category, search the news, save stories for later, and r
 ![Tests](https://img.shields.io/badge/Unit%20tests-46%20passing-brightgreen)
 ![License](https://img.shields.io/badge/License-MIT-yellow)
 
+</div>
+
 ## 🎥 Demo Video
 
 | Video | Link |
 |---|---|
 | Daily Pulse demo video | https://youtube.com/shorts/hoN08wMltRg |
-
 
 ## 📸 Screenshots
 
@@ -44,7 +47,7 @@ Browse top headlines by category, search the news, save stories for later, and r
 
 ## ✨ Features
 
-### Required
+### ✅ Required
 
 | Feature | What it does |
 |---|---|
@@ -56,7 +59,7 @@ Browse top headlines by category, search the news, save stories for later, and r
 | ⏳ **Loading & errors** | Spinners, friendly error messages, "Try again" buttons |
 | 🔄 **Pull to refresh** | Pull down on Home to load fresh news |
 
-### Bonus
+### ⭐ Bonus
 
 | Feature | What it does |
 |---|---|
@@ -65,34 +68,35 @@ Browse top headlines by category, search the news, save stories for later, and r
 | 📜 **Pagination** | More news loads as you scroll |
 | 🧪 **Unit tests** | 46 tests for the model, the API service and helpers |
 
-### Extras
+### 🎁 Extras
 
-- 👋 **Welcome screens** — pick your news interests; they move to the front of the Home tabs.
-- 📴 **Offline mode** — the last news of each category is saved on the phone and shown when there is no internet.
-- 💡 **Live search suggestions** — while you type: recent words, topics and words from loaded titles (the guessed part is highlighted in blue). It also finds matches in news already on the phone.
-- 🧭 **Explore tab** — category grid, popular topics and top stories.
-- 🔗 **Related news** on the details page.
-- 🖼️ **Smart image placeholders** — when a story has no image, a colored box shows the short source name (like `WSJ` or `BBC`).
-- ⚡ **API saver** — each category is cached for 15 minutes, so switching tabs does not waste API requests.
-- ⚙️ **Settings** — change interests, show the welcome screens again, clear search history, clear cached news, app version and links.
-
+| Feature | What it does |
+|---|---|
+| 👋 **Welcome screens** | Pick your news interests; they move to the front of the Home tabs |
+| 📴 **Offline mode** | The last news of each category is saved on the phone and shown when there is no internet |
+| 💡 **Live search suggestions** | While you type: recent words, topics and words from loaded titles (the guessed part is highlighted in blue). It also finds matches in news already on the phone |
+| 🧭 **Explore tab** | Category grid, popular topics and top stories |
+| 🔗 **Related news** | Shown on the details page |
+| 🖼️ **Smart image placeholders** | When a story has no image, a colored box shows the short source name (like `WSJ` or `BBC`) |
+| ⚡ **API saver** | Each category is cached for 15 minutes, so switching tabs does not waste API requests |
+| ⚙️ **Settings** | Change interests, show the welcome screens again, clear search history, clear cached news, app version and links |
 
 ## 🚀 Setup
 
-### 1. What you need
+### 1️⃣ What you need
 
 - Flutter 3.x (Dart 3)
 - An Android phone or emulator
 - A free API key from [newsapi.org/register](https://newsapi.org/register)
 
-### 2. Get the code
+### 2️⃣ Get the code
 
 ```bash
 git clone https://github.com/SandaruwanChandrasena/daily-pulse.git
 cd daily-pulse
 ```
 
-### 3. Add your API key
+### 3️⃣ Add your API key
 
 The real key file is **not** on GitHub (it is in `.gitignore`).
 
@@ -106,7 +110,7 @@ class ApiKeys {
 }
 ```
 
-### 4. Run
+### 4️⃣ Run
 
 ```bash
 flutter pub get
@@ -121,8 +125,8 @@ flutter build apk --release
 
 The APK is at `build/app/outputs/flutter-apk/app-release.apk`.
 
-> ⚠️ Please run the app on **Android**. NewsAPI's free plan blocks requests from a web browser.
-
+> [!WARNING]
+> Please run the app on **Android**. NewsAPI's free plan blocks requests from a web browser.
 
 ## 📦 Packages Used
 
@@ -139,6 +143,7 @@ The APK is at `build/app/outputs/flutter-apk/app-release.apk`.
 | [`google_fonts`](https://pub.dev/packages/google_fonts) | Archivo (titles) and Inter (body text) |
 | [`flutter_launcher_icons`](https://pub.dev/packages/flutter_launcher_icons) | Makes the app icon (dev only) |
 
+> [!NOTE]
 > `shared_preferences_android` is pinned below `2.5.0`. Version 2.5.x had a bug where saving did not work in **release** builds (R8 renamed some classes). See [LEARNING_LOG.md](LEARNING_LOG.md) for the full story.
 
 ## 🗂️ Project Structure
@@ -163,12 +168,14 @@ test/
 └── utils/
 ```
 
-### How the code is organized
+### 🧩 How the code is organized
 
-- **Screens** only show things. They read data from **providers**.
-- **Providers** hold the app state and call **services**.
-- **Services** talk to NewsAPI or save data on the phone.
-- **Models** turn JSON into Dart objects.
+| Layer | Job |
+|---|---|
+| **Screens** | Only show things. They read data from **providers** |
+| **Providers** | Hold the app state and call **services** |
+| **Services** | Talk to NewsAPI or save data on the phone |
+| **Models** | Turn JSON into Dart objects |
 
 ```
 Screen  →  Provider  →  Service  →  NewsAPI / phone storage
@@ -182,7 +189,7 @@ Screen  →  Provider  →  Service  →  NewsAPI / phone storage
 flutter test
 ```
 
-- 46 unit tests: article model, categories, API service (with a fake server), dates, search suggestions and source styles.
+- **46 unit tests:** article model, categories, API service (with a fake server), dates, search suggestions and source styles.
 - The tests use **no internet** and **no API requests**.
 - The full **manual test plan** (release mode, on a real phone) is in [TESTING.md](TESTING.md).
 
@@ -196,7 +203,7 @@ flutter test
 | **No Sri Lanka top headlines** | The Sri Lanka tab searches for `"Sri Lanka"` in titles instead |
 | **Top headlines are from the US** | Uses `country=us` |
 
-### Honest notes
+### 💬 Honest notes
 
 - **Trending** and **popular** topics are fixed lists. NewsAPI has no trending feature.
 - The details page shows the **short description** from NewsAPI. Tap **Read full article** for the full story.
@@ -207,20 +214,23 @@ flutter test
 
 All the problems I hit and how I fixed them are in **[LEARNING_LOG.md](LEARNING_LOG.md)**.
 
-
 ## 🙏 Credits
 
-- News data by [NewsAPI.org](https://newsapi.org)
-- Fonts: [Archivo](https://fonts.google.com/specimen/Archivo) and [Inter](https://fonts.google.com/specimen/Inter) from Google Fonts
-- Icons: Material Icons
+| What | From |
+|---|---|
+| News data | [NewsAPI.org](https://newsapi.org) |
+| Fonts | [Archivo](https://fonts.google.com/specimen/Archivo) and [Inter](https://fonts.google.com/specimen/Inter) from Google Fonts |
+| Icons | Material Icons |
 
 ## 👤 Author
 
 **Sandaruwan Chandrasena**
 
-- 🐙 GitHub: [@SandaruwanChandrasena](https://github.com/SandaruwanChandrasena)
-- 🎥 YouTube: [@SandaruwanChandrasena-98](https://www.youtube.com/@SandaruwanChandrasena-98)
-- 💼 LinkedIn: [sandaruwanchandrasena](https://www.linkedin.com/in/sandaruwanchandrasena)
+| | |
+|---|---|
+| 🐙 GitHub | [@SandaruwanChandrasena](https://github.com/SandaruwanChandrasena) |
+| 🎥 YouTube | [@SandaruwanChandrasena-98](https://www.youtube.com/@SandaruwanChandrasena-98) |
+| 💼 LinkedIn | [sandaruwanchandrasena](https://www.linkedin.com/in/sandaruwanchandrasena) |
 
 ## 📄 License
 
